@@ -81,19 +81,19 @@
 
 <meta name="description" content="看似简单的事情，自己实践起来总是会有意想不到的问题，通过解决问题总会有新的收获。所以要多动手，少BB。这个最近导致君士坦丁堡审计延迟的一个以太坊bug，来自于EIP 1283，EIP的全称是Ethereum Improvement Proposals（以太坊改进提案），谁都可以上去提一些对以太坊的改进提案，不过必须得严谨、正式，以太坊君士坦丁堡这次漏洞就是由一个EIP引起的，这个EIP的编号是12">
 <meta property="og:type" content="article">
-<meta property="og:title" content="区块链学习第一阶段总结">
+<meta property="og:title" content="constantinople-reentrancy attack 复现">
 <meta property="og:url" content="http://young.0kami.cn/2019/01/23/constantinople-reentrancy attack 复现/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="看似简单的事情，自己实践起来总是会有意想不到的问题，通过解决问题总会有新的收获。所以要多动手，少BB。这个最近导致君士坦丁堡审计延迟的一个以太坊bug，来自于EIP 1283，EIP的全称是Ethereum Improvement Proposals（以太坊改进提案），谁都可以上去提一些对以太坊的改进提案，不过必须得严谨、正式，以太坊君士坦丁堡这次漏洞就是由一个EIP引起的，这个EIP的编号是12">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://young.0kami.cn/Users/youngyoung/Desktop/1548214108218.jpg">
-<meta property="og:image" content="http://young.0kami.cn/Users/youngyoung/Desktop/1548217828084.jpg">
-<meta property="og:image" content="http://young.0kami.cn/Users/youngyoung/Desktop/1548218243431.jpg">
-<meta property="og:updated_time" content="2019-01-23T06:08:46.588Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p3.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p4.jpg">
+<meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p5.jpg">
+<meta property="og:updated_time" content="2019-01-23T06:14:09.930Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="区块链学习第一阶段总结">
+<meta name="twitter:title" content="constantinople-reentrancy attack 复现">
 <meta name="twitter:description" content="看似简单的事情，自己实践起来总是会有意想不到的问题，通过解决问题总会有新的收获。所以要多动手，少BB。这个最近导致君士坦丁堡审计延迟的一个以太坊bug，来自于EIP 1283，EIP的全称是Ethereum Improvement Proposals（以太坊改进提案），谁都可以上去提一些对以太坊的改进提案，不过必须得严谨、正式，以太坊君士坦丁堡这次漏洞就是由一个EIP引起的，这个EIP的编号是12">
-<meta name="twitter:image" content="http://young.0kami.cn/Users/youngyoung/Desktop/1548214108218.jpg">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p3.jpg">
 
 
 
@@ -129,7 +129,7 @@
 
 
 
-  <title>区块链学习第一阶段总结 | Hexo</title>
+  <title>constantinople-reentrancy attack 复现 | Hexo</title>
   
 
 
@@ -253,7 +253,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">区块链学习第一阶段总结</h1>
+          <h1 class="post-title" itemprop="name headline">constantinople-reentrancy attack 复现</h1>
         
 
         <div class="post-meta">
@@ -319,7 +319,7 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.getBalance(PaymentSharer.address)</span><br><span class="line">//查看PaymentSharer合约账户余额</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;Attacker.deployed().then(i=&gt;i.attack(PaymentSharer.address));</span><br><span class="line">//进行攻击</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.getBalance(PaymentSharer.address)</span><br><span class="line">//余额为1eth，攻击成功！</span><br></pre></td></tr></table></figure>
-<p><img src="/Users/youngyoung/Desktop/1548214108218.jpg" alt="复现结果"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p3.jpg" alt="复现结果"></p>
 <h3 id="2-遇到的问题以及要注意的地方"><a href="#2-遇到的问题以及要注意的地方" class="headerlink" title="2.遇到的问题以及要注意的地方"></a>2.遇到的问题以及要注意的地方</h3><p>这个过程看似就一个步骤，没有什么问题，但因为自己知识的欠缺，还是弄了好久。下面分点记录问题：<br>1、<code>address payable _first</code>编译不通过<br>查看编译器版本，solc-js版本只有4.*，果断升级truffle，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall -g truffle</span><br><span class="line">11530  npm install -g truffle@5.0.2</span><br><span class="line">``` </span><br><span class="line">升级后：</span><br></pre></td></tr></table></figure></p>
 <p>➜ truffle version<br>Truffle v5.0.2 (core: 5.0.2)<br>Solidity v0.5.0 (solc-js)<br>Node v10.0.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2、ganache 升级</span><br></pre></td></tr></table></figure></p>
 <p>➜ npm uninstall -g  ganache-cli<br>➜ npm i -g ganache-cli@beta<br><code>`</code></p>
@@ -328,10 +328,10 @@
 <p>修改之后没有了这个问题。然而却报错<code>VM Exception while processing transaction: revert</code>。</p>
 <p>4、<code>VM Exception while processing transaction: revert</code>报错<br>真是一个令人头疼的问题，没有具体的错误的信息。通常revert都是因为gas不足，但是现在理论依据很足，这个漏洞能利用就是因为在EIP1283生效之前对变量进行更改再重置至少需要15000 gas，而生效后只需要400 gas，2300gas上限已经足够了。</p>
 <p>尝试很多解决办法都没有解决，于是下载了网上的复现<a href="https://github.com/ChainSecurity/constantinople-reentrancy.git" target="_blank" rel="noopener">脚本</a>,增加了两行log信息后运行——打印被攻击合约的账户余额</p>
-<p><img src="/Users/youngyoung/Desktop/1548217828084.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p4.jpg" alt="p4"></p>
 <p>那说明这个漏洞是可以被利用的，<code>ganache-cli --hardfork=constantinople</code>也是没有问题。</p>
 <p>然后查看了该测试项目的truffle配置文件truffle.js,其中指定了solc的版本为0.5.2：</p>
-<p><img src="/Users/youngyoung/Desktop/1548218243431.jpg" alt=""></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p5.jpg" alt="p5"></p>
 <p>而我当前默认版本是0.5.0，于是修改了自己truffle的配置文件truffle-config.js,指定solc的版本为0.5.2，再重新执行一遍上述第1节的过程，成功！</p>
 <p>但是奇怪的是后来再把版本修改为0.5.0和0.5.1都利用成功了。所以好像编译器版本在0.5.0以上就ok了。但是那个<code>revert</code>错误又是什么原因呢？从<a href="https://vmexceptionwhileprocessingtransactionrevert.com/" target="_blank" rel="noopener">VM Exception while processing transaction: revert</a>这边里面有提到<br>“ If you’re using truffle, configure the optmizier in truffle.js with solc: { optimizer: { enabled: true, runs: 200 } }”</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>一个简简单单的漏洞复现还是花了一天多时间，不过这个过程也学到了新的东西以及知道自己还有哪些欠缺。后面关于EIP需要深入了解一下，关于公链的内部机制的一些东西，自己都一点不了解。</p>
