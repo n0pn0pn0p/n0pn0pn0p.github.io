@@ -229,6 +229,158 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://young.0kami.cn/2019/01/23/constantinople-reentrancy attack 复现/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yogurt">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/01/23/constantinople-reentrancy attack 复现/" itemprop="url">区块链学习第一阶段总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-01-23T14:00:03+08:00">
+                2019-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <p>看似简单的事情，自己实践起来总是会有意想不到的问题，通过解决问题总会有新的收获。所以要多动手，少BB。<br>这个最近导致君士坦丁堡审计延迟的一个以太坊bug，来自于EIP 1283，EIP的全称是Ethereum Improvement Proposals（以太坊改进提案），谁都可以上去提一些对以太坊的改进提案，不过必须得严谨、正式，以太坊君士坦丁堡这次漏洞就是由一个EIP引起的，这个EIP的编号是1283，详情地址如下：<br><a href="https://eips.ethereum.org/EIPS/eip-1283" target="_blank" rel="noopener">https://eips.ethereum.org/EIPS/eip-1283</a></p>
+<p>网上也能搜到一些关于这个漏洞的复现，包括详细的复现脚本：<a href="https://github.com/ChainSecurity/constantinople-reentrancy.git" target="_blank" rel="noopener">GitHub - ChainSecurity/constantinople-reentrancy: Vulnerable code example including tests for Constantinople Reentrancy</a>，只需要两个命令就能够复现该漏洞。关于漏洞原理就不再赘述了。</p>
+<p>为了更加深入的理解这个漏洞，所有打算利用ganache-cli+truffle来操作一番。</p>
+<h3 id="1-复现过程"><a href="#1-复现过程" class="headerlink" title="1.复现过程"></a>1.复现过程</h3><p>然而整个过程并不顺利，中间遇到了好几个问题。首先成功复现的步骤和截图记录下来：（关于ganache-cli+truffle的安装及使用可见：）</p>
+<p>1、首先讲漏洞利用合约PaymentSharer.sol、Attacker.sol保存到truffle的contracts目录下</p>
+<p>2、在终端编译合约<br><code>truffle compile</code><br>3、运行ganache-cli<br><code>ganache-cli --hardfork=constantinople</code></p>
+<p>4、部署合约<br><code>truffle migrate</code></p>
+<p>5、进入控制台执行命令<br><code>truffle console</code><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;</span><br><span class="line">truffle(development)&gt;innocent = &quot;0x792c1e8f0deaa9b1f30c20b5c47104cd26a6227e&quot;</span><br><span class="line">//任意一个有余额的账户，用于给Attacker合约充钱</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.sendTransaction(&#123;from:innocent,to:Attacker.address,value:2000000000000000000&#125;);</span><br><span class="line">//向Attacker充钱，2eth</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.getBalance(Attacker.address);</span><br><span class="line">//查看余额</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;PaymentSharer.deployed().then(i=&gt;i.init(0,Attacker.address,&quot;0x96e0070c1c62e07dc25c5699b9e7a8a60165e073&quot;));</span><br><span class="line">//&quot;0x96e0070c1c62e07dc25c5699b9e7a8a60165e073&quot;是Attacker合约的owner，也可以为其他账户</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;PaymentSharer.deployed().then(i=&gt;i.updateSplit(0,1));</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;PaymentSharer.deployed().then(i=&gt;i.deposit(0,&#123;from:&quot;0x96e0070c1c62e07dc25c5699b9e7a8a60165e073&quot;, value: 1000000000000000000&#125;));</span><br><span class="line"></span><br><span class="line">truffle(development)&gt;PaymentSharer.deployed().then(i=&gt;i.deposit(1,&#123;from:innocent, value: 2000000000000000000&#125;));</span><br><span class="line">//通过deposit向PaymentSharer转3eth，其中splits[0]=1eth,splits[1]=2eth</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.getBalance(PaymentSharer.address)</span><br><span class="line">//查看PaymentSharer合约账户余额</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;Attacker.deployed().then(i=&gt;i.attack(PaymentSharer.address));</span><br><span class="line">//进行攻击</span><br></pre></td></tr></table></figure>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.getBalance(PaymentSharer.address)</span><br><span class="line">//余额为1eth，攻击成功！</span><br></pre></td></tr></table></figure>
+<p><img src="/Users/youngyoung/Desktop/1548214108218.jpg" alt="复现结果"></p>
+<h3 id="2-遇到的问题以及要注意的地方"><a href="#2-遇到的问题以及要注意的地方" class="headerlink" title="2.遇到的问题以及要注意的地方"></a>2.遇到的问题以及要注意的地方</h3><p>这个过程看似就一个步骤，没有什么问题，但因为自己知识的欠缺，还是弄了好久。下面分点记录问题：<br>1、<code>address payable _first</code>编译不通过<br>查看编译器版本，solc-js版本只有4.*，果断升级truffle，<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall -g truffle</span><br><span class="line">11530  npm install -g truffle@5.0.2</span><br><span class="line">``` </span><br><span class="line">升级后：</span><br></pre></td></tr></table></figure></p>
+<p>➜ truffle version<br>Truffle v5.0.2 (core: 5.0.2)<br>Solidity v0.5.0 (solc-js)<br>Node v10.0.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2、ganache 升级</span><br></pre></td></tr></table></figure></p>
+<p>➜ npm uninstall -g  ganache-cli<br>➜ npm i -g ganache-cli@beta<br><code>`</code></p>
+<p>3、fallback函数未被调用<br>执行了Attacker.attack后账户b始终没有增加余额，后通过在fallback函数中加日志信息发现该函数并没有被执行。<br>后来无意间在网上看到“调用的fallback函数与你所指定的地址有关。比如上面的例子中，使用的是msg.sender.transfer(1)，那么将意味着如果msg.sender为一个合约地址，就调用它里面写的fallback函数，如果不是合约地址，那么自然就没有fallback函数调用”。<br>这是自己一直没有搞清楚的一个概念（对于执行攻击合约里面的fallback函数还是原合约的fallback函数之前还疑惑过，却没有去深究）</p>
+<p>在PaymentSharer.sol合约里我们想要利用<code>a.transfer(depo * splits[id] / 100);</code>来触发攻击合约里面的fallback函数，那么a就得是攻击合约的地址，即在执行PaymentSharer.init()的时候,第一个参数必须为Attacker.address。即在而一开始我没有注意这个问题。</p>
+<p>修改之后没有了这个问题。然而却报错<code>VM Exception while processing transaction: revert</code>。</p>
+<p>4、<code>VM Exception while processing transaction: revert</code>报错<br>真是一个令人头疼的问题，没有具体的错误的信息。通常revert都是因为gas不足，但是现在理论依据很足，这个漏洞能利用就是因为在EIP1283生效之前对变量进行更改再重置至少需要15000 gas，而生效后只需要400 gas，2300gas上限已经足够了。</p>
+<p>尝试很多解决办法都没有解决，于是下载了网上的复现<a href="https://github.com/ChainSecurity/constantinople-reentrancy.git" target="_blank" rel="noopener">脚本</a>,增加了两行log信息后运行——打印被攻击合约的账户余额</p>
+<p><img src="/Users/youngyoung/Desktop/1548217828084.jpg" alt=""></p>
+<p>那说明这个漏洞是可以被利用的，<code>ganache-cli --hardfork=constantinople</code>也是没有问题。</p>
+<p>然后查看了该测试项目的truffle配置文件truffle.js,其中指定了solc的版本为0.5.2：</p>
+<p><img src="/Users/youngyoung/Desktop/1548218243431.jpg" alt=""></p>
+<p>而我当前默认版本是0.5.0，于是修改了自己truffle的配置文件truffle-config.js,指定solc的版本为0.5.2，再重新执行一遍上述第1节的过程，成功！</p>
+<p>但是奇怪的是后来再把版本修改为0.5.0和0.5.1都利用成功了。所以好像编译器版本在0.5.0以上就ok了。但是那个<code>revert</code>错误又是什么原因呢？从<a href="https://vmexceptionwhileprocessingtransactionrevert.com/" target="_blank" rel="noopener">VM Exception while processing transaction: revert</a>这边里面有提到<br>“ If you’re using truffle, configure the optmizier in truffle.js with solc: { optimizer: { enabled: true, runs: 200 } }”</p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>一个简简单单的漏洞复现还是花了一天多时间，不过这个过程也学到了新的东西以及知道自己还有哪些欠缺。后面关于EIP需要深入了解一下，关于公链的内部机制的一些东西，自己都一点不了解。</p>
+<p>参考文献<br>[1]<a href="https://bcsec.org/index/detail/tag/2/id/465" target="_blank" rel="noopener">公链安全之以太坊君士坦丁堡重入漏洞分析</a><br>[2]<a href="https://medium.com/chainsecurity/constantinople-enables-new-reentrancy-attack-ace4088297d9" target="_blank" rel="noopener">Constantinople enables new Reentrancy Attack – ChainSecurity – Medium</a><br>[3]<a href="https://vmexceptionwhileprocessingtransactionrevert.com/" target="_blank" rel="noopener">VM Exception while processing transaction: revert</a><br>[4]<a href="https://www.cnblogs.com/wanghui-garcia/p/9580464.html" target="_blank" rel="noopener">solidity fallback函数 - 慢行厚积 - 博客园</a><br>[5]<a href="https://github.com/ChainSecurity/constantinople-reentrancy" target="_blank" rel="noopener">GitHub - ChainSecurity/constantinople-reentrancy: Vulnerable code example including tests for Constantinople Reentrancy</a></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://young.0kami.cn/2019/01/19/区块链应用案例整理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -560,7 +712,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">2</span>
+                  <span class="site-state-item-count">3</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
