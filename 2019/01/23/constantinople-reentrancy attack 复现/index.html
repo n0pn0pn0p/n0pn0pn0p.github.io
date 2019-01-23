@@ -89,7 +89,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p3.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p4.jpg">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p5.jpg">
-<meta property="og:updated_time" content="2019-01-23T06:21:38.567Z">
+<meta property="og:updated_time" content="2019-01-23T06:25:34.922Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="constantinople-reentrancy attack 复现">
 <meta name="twitter:description" content="看似简单的事情，自己实践起来总是会有意想不到的问题，通过解决问题总会有新的收获。所以要多动手，少BB。这个最近导致君士坦丁堡审计延迟的一个以太坊bug，来自于EIP 1283，EIP的全称是Ethereum Improvement Proposals（以太坊改进提案），谁都可以上去提一些对以太坊的改进提案，不过必须得严谨、正式，以太坊君士坦丁堡这次漏洞就是由一个EIP引起的，这个EIP的编号是12">
@@ -320,7 +320,8 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;Attacker.deployed().then(i=&gt;i.attack(PaymentSharer.address));</span><br><span class="line">//进行攻击</span><br></pre></td></tr></table></figure>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">truffle(development)&gt;web3.eth.getBalance(PaymentSharer.address)</span><br><span class="line">//余额为1eth，攻击成功！</span><br></pre></td></tr></table></figure>
 <p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/p3.jpg" alt="复现结果"></p>
-<h3 id="2-遇到的问题以及要注意的地方"><a href="#2-遇到的问题以及要注意的地方" class="headerlink" title="2.遇到的问题以及要注意的地方"></a>2.遇到的问题以及要注意的地方</h3><p>这个过程看似就一个步骤，没有什么问题，但因为自己知识的欠缺，还是弄了好久。下面分点记录问题：<br>1、<code>address payable _first</code>编译不通过<br>查看编译器版本，solc-js版本只有4.*，果断升级truffle:</p>
+<h3 id="2-遇到的问题以及要注意的地方"><a href="#2-遇到的问题以及要注意的地方" class="headerlink" title="2.遇到的问题以及要注意的地方"></a>2.遇到的问题以及要注意的地方</h3><p>这个过程看似就一个步骤，没有什么问题，但因为自己知识的欠缺，还是弄了好久。下面分点记录问题：</p>
+<p>1、<code>address payable _first</code>编译不通过<br>查看编译器版本，solc-js版本只有4.*，果断升级truffle:</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">npm uninstall -g truffle</span><br><span class="line">11530  npm install -g truffle@5.0.2</span><br><span class="line">``` </span><br><span class="line">升级后：</span><br></pre></td></tr></table></figure>
 <p>➜ truffle version<br>Truffle v5.0.2 (core: 5.0.2)<br>Solidity v0.5.0 (solc-js)<br>Node v10.0.0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">2、ganache 升级</span><br></pre></td></tr></table></figure></p>
 <p>➜ npm uninstall -g  ganache-cli<br>➜ npm i -g ganache-cli@beta<br><code>`</code></p>
