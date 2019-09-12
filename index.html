@@ -300,7 +300,7 @@
       
         
           
-            <h1 id="以太坊智能合约opcode分析入门"><a href="#以太坊智能合约opcode分析入门" class="headerlink" title="以太坊智能合约opcode分析入门"></a>以太坊智能合约opcode分析入门</h1><p>编程语言虚拟机一般有两种类型，基于栈，或者基于寄存器。和JVM一样，EVM也是基于栈的虚拟机。</p>
+            <p>编程语言虚拟机一般有两种类型，基于栈，或者基于寄存器。和JVM一样，EVM也是基于栈的虚拟机。</p>
 <p>既然是支持栈的虚拟机，那么EVM肯定首先得有个栈。为了方便进行密码学计算，EVM采用了32字节（256比特）的字长。EVM栈以字（Word）为单位进行操作，最多可以容纳1024个字。</p>
 <p>和JVM一样，EVM执行的也是字节码。由于操作码被限制在一个字节以内，所以EVM指令集最多只能容纳256条指令。目前EVM已经定义了约142条指令，还有100多条指令可供以后扩展。这142条指令包括算术运算指令，比较操作指令，按位运算指令，密码学计算指令，栈、memory、storage操作指令，跳转指令，区块、智能合约相关指令等。</p>
 <h2 id="一、开始"><a href="#一、开始" class="headerlink" title="一、开始"></a>一、开始</h2><p>对于智能合约的反编译，之前一直习惯使用在线的工具：<a href="https://ethervm.io/decompile" target="_blank" rel="noopener">Online Solidity Decompiler</a><br>反编译实例：</p>
@@ -332,12 +332,12 @@
 <ul>
 <li>函数运算过程</li>
 </ul>
-<p><img src="attachments/59c5713a.png" alt="01221030_Z6Do的副本.png"></p>
+<p><img src="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/01221030_Z6Do.png" alt="01221030_Z6Do的副本.png"></p>
 <h2 id="四、remix动态调试"><a href="#四、remix动态调试" class="headerlink" title="四、remix动态调试"></a>四、remix动态调试</h2><p>remix（<a href="https://remix.ethereum.org/#optimize=false&amp;version=soljson-v0.4.24+commit.e67f0147.js&amp;evmVersion=null" target="_blank" rel="noopener">Remix - Ethereum IDE</a>）提供了动态调试的功能</p>
 <p>点击左侧的debug图标，输入合约的交易hash，点击<code>start debugging</code></p>
-<p><img src="attachments/d00ba0e8.png" alt="d00ba0e8.png"></p>
+<p><img src="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/d00ba0e8.png" alt="d00ba0e8.png"></p>
 <p>同态调试时会展示opcode，stack、storage以及memory的值。</p>
-<p><img src="attachments/e30468bd.png" alt="e30468bd.png"></p>
+<p><img src="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/e30468bd.png" alt="e30468bd.png"></p>
 <h2 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h2><p>因为这个合约本身比较简单，所以在调试过程中会感觉比较容易。分析opcode，会发现有很多看似多余的代码，不理解其意思，后续还需要多练习，以及阅读solidity的编译器源码(<a href="https://github.com/ethereum/solidity" target="_blank" rel="noopener">GitHub - ethereum/solidity: Solidity, the Contract-Oriented Programming Language</a>)以及以太坊中evm的实现(<a href="https://github.com/ethereum/go-ethereum/blob/master/core/vm" target="_blank" rel="noopener">go-ethereum/core/vm at master · ethereum/go-ethereum · GitHub</a>)。</p>
 
           
