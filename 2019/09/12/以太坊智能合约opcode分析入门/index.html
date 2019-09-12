@@ -87,14 +87,14 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="编程语言虚拟机一般有两种类型，基于栈，或者基于寄存器。和JVM一样，EVM也是基于栈的虚拟机。 既然是支持栈的虚拟机，那么EVM肯定首先得有个栈。为了方便进行密码学计算，EVM采用了32字节（256比特）的字长。EVM栈以字（Word）为单位进行操作，最多可以容纳1024个字。 和JVM一样，EVM执行的也是字节码。由于操作码被限制在一个字节以内，所以EVM指令集最多只能容纳256条指令。目前EV">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/01221030_Z6Do.png">
-<meta property="og:image" content="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/d00ba0e8.png">
-<meta property="og:image" content="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/e30468bd.png">
-<meta property="og:updated_time" content="2019-09-12T07:31:41.102Z">
+<meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/01221030_Z6Do.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/d00ba0e8.png">
+<meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/e30468bd.png">
+<meta property="og:updated_time" content="2019-09-12T07:36:59.907Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="以太坊智能合约opcode分析入门">
 <meta name="twitter:description" content="编程语言虚拟机一般有两种类型，基于栈，或者基于寄存器。和JVM一样，EVM也是基于栈的虚拟机。 既然是支持栈的虚拟机，那么EVM肯定首先得有个栈。为了方便进行密码学计算，EVM采用了32字节（256比特）的字长。EVM栈以字（Word）为单位进行操作，最多可以容纳1024个字。 和JVM一样，EVM执行的也是字节码。由于操作码被限制在一个字节以内，所以EVM指令集最多只能容纳256条指令。目前EV">
-<meta name="twitter:image" content="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/01221030_Z6Do.png">
+<meta name="twitter:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/01221030_Z6Do.png">
 
 
 
@@ -336,12 +336,12 @@
 <ul>
 <li>函数运算过程</li>
 </ul>
-<p><img src="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/01221030_Z6Do.png" alt="01221030_Z6Do的副本.png"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/01221030_Z6Do.png" alt="01221030_Z6Do的副本.png"></p>
 <h2 id="四、remix动态调试"><a href="#四、remix动态调试" class="headerlink" title="四、remix动态调试"></a>四、remix动态调试</h2><p>remix（<a href="https://remix.ethereum.org/#optimize=false&amp;version=soljson-v0.4.24+commit.e67f0147.js&amp;evmVersion=null" target="_blank" rel="noopener">Remix - Ethereum IDE</a>）提供了动态调试的功能</p>
 <p>点击左侧的debug图标，输入合约的交易hash，点击<code>start debugging</code></p>
-<p><img src="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/d00ba0e8.png" alt="d00ba0e8.png"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/d00ba0e8.png" alt="d00ba0e8.png"></p>
 <p>同态调试时会展示opcode，stack、storage以及memory的值。</p>
-<p><img src="https://github.com/n0pn0pn0p/n0pn0pn0p.github.io/blob/master/myimages/e30468bd.png" alt="e30468bd.png"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/e30468bd.png" alt="e30468bd.png"></p>
 <h2 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h2><p>因为这个合约本身比较简单，所以在调试过程中会感觉比较容易。分析opcode，会发现有很多看似多余的代码，不理解其意思，后续还需要多练习，以及阅读solidity的编译器源码(<a href="https://github.com/ethereum/solidity" target="_blank" rel="noopener">GitHub - ethereum/solidity: Solidity, the Contract-Oriented Programming Language</a>)以及以太坊中evm的实现(<a href="https://github.com/ethereum/go-ethereum/blob/master/core/vm" target="_blank" rel="noopener">go-ethereum/core/vm at master · ethereum/go-ethereum · GitHub</a>)。</p>
 
       
