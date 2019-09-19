@@ -86,18 +86,18 @@
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="一、基础知识EVM opcode（GitHub - crytic/evm-opcodes: Ethereum opcodes and instruction reference） 三种存储类型上一次我们稍微提到过智能合约的三种存储方式：stack，memory，storage，想在详细描述一下：  stack：主要使用push和pop来操作，push后面会带上存入栈数据的长度，最小为1字节，最大为">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://young.0kami.cn/2019/09/19/以太坊智能合约opcode分析入门%20partII/attachments/ff78c4c8.png">
+<meta property="og:image" content="http://young.0kami.cn/https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ff78c4c8.png">
 <meta property="og:image" content="https://cdn.rawgit.com/ajsantander/23c032ec7a722890feed94d93dff574a/raw/a453b28077e9669d5b51f2dc6d93b539a76834b8/BasicToken.svg">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/a449ce7e.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/5f5fa86f.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/a6b4d1a1.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/61818cc4.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ea2e30bf.png">
-<meta property="og:updated_time" content="2019-09-19T11:00:57.944Z">
+<meta property="og:updated_time" content="2019-09-19T11:06:51.650Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="以太坊智能合约opcode分析入门 partII">
 <meta name="twitter:description" content="一、基础知识EVM opcode（GitHub - crytic/evm-opcodes: Ethereum opcodes and instruction reference） 三种存储类型上一次我们稍微提到过智能合约的三种存储方式：stack，memory，storage，想在详细描述一下：  stack：主要使用push和pop来操作，push后面会带上存入栈数据的长度，最小为1字节，最大为">
-<meta name="twitter:image" content="http://young.0kami.cn/2019/09/19/以太坊智能合约opcode分析入门%20partII/attachments/ff78c4c8.png">
+<meta name="twitter:image" content="http://young.0kami.cn/https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ff78c4c8.png">
 
 
 
@@ -340,7 +340,7 @@
 </ul>
 <p>用python表示该过程：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">&gt;&gt;&gt; from sha3 import keccak_256</span><br><span class="line">&gt;&gt;&gt; data = &quot;d25ed029c093e56bc8911a07c46545000cbf37c6&quot;.rjust(64, &quot;0&quot;)</span><br><span class="line"></span><br><span class="line">&gt;&gt;&gt; data += &quot;01&quot;.rjust(64, &quot;0&quot;)</span><br><span class="line">&gt;&gt;&gt; keccak_256(data.encode()).hexdigest()</span><br><span class="line">&apos;739cc24910ff41b372fbcb2294933bdc3108bd86ffd915d64d569c68a85121ec&apos;</span><br><span class="line"># </span><br><span class="line">a[&quot;0xd25ed029c093e56bc8911a07c46545000cbf37c6&quot;] == SLOAD(&quot;739cc24910ff41b372fbcb2294933bdc3108bd86ffd915d64d569c68a85121ec&quot;)</span><br></pre></td></tr></table></figure></p>
 <p>因此，我们可以用以太坊客户端直接获取:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt; eth.getStorageAt(合约地址, &quot;739cc24910ff41b372fbcb2294933bdc3108bd86ffd915d64d569c68a85121ec&quot;)</span><br></pre></td></tr></table></figure></p>
-<p>根据映射变量的储存模型，或许我们真的可以在智能合约中隐藏私密信息，比如，有一个secret，只有知道key的人才能知道secret的内容，我们可以b[key] = secret, 虽然数据仍然是储存在storage中，但是在不知道key的情况下却无法获取到secret。<br>一道ctf题就是用了这个思路：<br>2、<a href="https://etherscan.io/address/0x949a6ac29b9347b3eb9a420272a9dd7890b787a3#code" target="_blank" rel="noopener">Ethereum Accounts, Addresses and Contracts</a><br><img src="attachments/ff78c4c8.png" alt="44203c2e.png"></p>
+<p>根据映射变量的储存模型，或许我们真的可以在智能合约中隐藏私密信息，比如，有一个secret，只有知道key的人才能知道secret的内容，我们可以b[key] = secret, 虽然数据仍然是储存在storage中，但是在不知道key的情况下却无法获取到secret。<br>一道ctf题就是用了这个思路：<br>2、<a href="https://etherscan.io/address/0x949a6ac29b9347b3eb9a420272a9dd7890b787a3#code" target="_blank" rel="noopener">Ethereum Accounts, Addresses and Contracts</a><br><img src="/https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ff78c4c8.png" alt="44203c2e.png"></p>
 <p>给了 ETH 单位，又给了地址，那么题目的意思就可以理解成 ： send much money to this contract</p>
 <h3 id="变长变量"><a href="#变长变量" class="headerlink" title="变长变量"></a>变长变量</h3><p>变长变量也就是数组，长度不一定，其储存方式有点像上面两种的结合<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">uint a;         // slot = 0</span><br><span class="line">uint[] b;       // 1</span><br><span class="line">uint c;         // 2</span><br></pre></td></tr></table></figure></p>
 <p>数组仍然会占用对应slot的storage，储存数组的长度(b.length)存入slot=1的位置，</p>
