@@ -248,7 +248,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2019/09/19/以太坊智能合约opcode分析入门 partII/" itemprop="url">Untitled</a></h1>
+                <a class="post-title-link" href="/2019/09/19/以太坊智能合约opcode分析入门 partII/" itemprop="url">以太坊智能合约opcode分析入门 partII</a></h1>
         
 
         <div class="post-meta">
@@ -260,7 +260,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-19T18:27:30+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-09-19T18:37:03+08:00">
                 2019-09-19
               </time>
             
@@ -300,7 +300,7 @@
       
         
           
-            <h1 id="以太坊智能合约opcode分析入门-partII"><a href="#以太坊智能合约opcode分析入门-partII" class="headerlink" title="以太坊智能合约opcode分析入门 partII"></a>以太坊智能合约opcode分析入门 partII</h1><h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>EVM opcode（<a href="https://github.com/crytic/evm-opcodes" target="_blank" rel="noopener">GitHub - crytic/evm-opcodes: Ethereum opcodes and instruction reference</a>）</p>
+            <h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p>EVM opcode（<a href="https://github.com/crytic/evm-opcodes" target="_blank" rel="noopener">GitHub - crytic/evm-opcodes: Ethereum opcodes and instruction reference</a>）</p>
 <h2 id="三种存储类型"><a href="#三种存储类型" class="headerlink" title="三种存储类型"></a>三种存储类型</h2><p>上一次我们稍微提到过智能合约的三种存储方式：stack，memory，storage，想在详细描述一下：</p>
 <ul>
 <li><p>stack：<br>主要使用push和pop来操作，push后面会带上存入栈数据的长度，最小为1字节，最大为32字节，所以OPCODE从0x60-0x7f分别代表的是push1-push32。<br>PUSH1会将OPCODE后面1字节的数据放入栈中，比如字节码是0x6060代表的指令就是PUSH1 0x60。<br>除了push和pop指令之外，其他指令获取参数都是从栈中获取，然后直接消耗掉当前栈中的值，指令返回的结果直接存入栈中。（这也是为什么时常会看到dul命令）</p>
@@ -357,20 +357,22 @@
 <p>以上六篇blog十分详细有条理的分析了一个示例合约的编译后的opcode，主要思路围绕这幅图<img src="https://cdn.rawgit.com/ajsantander/23c032ec7a722890feed94d93dff574a/raw/a453b28077e9669d5b51f2dc6d93b539a76834b8/BasicToken.svg" alt="BasicToken.svg"><br>从一个合约的opcode的结构上分析了一个合约：</p>
 <p>总体介绍 —&gt;Creation &amp; Runtime —&gt; 函数selector —&gt; 函数 wrapper —&gt; 函数体分析 —&gt;元数据哈希</p>
 <h2 id="Creation-amp-Runtime"><a href="#Creation-amp-Runtime" class="headerlink" title="Creation &amp; Runtime"></a>Creation &amp; Runtime</h2><ul>
-<li>Creation 部分是编译器编译好后的创建合约代码，主要执行了合约的构造函数，并且返回了合约的runtime代码。以及payable部分的检查<br><img src="attachments/a449ce7e.png" alt="a449ce7e.png"></li>
+<li>Creation 部分是编译器编译好后的创建合约代码，主要执行了合约的构造函数，并且返回了合约的runtime代码。以及payable部分的检查<br><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/a449ce7e.png" alt="a449ce7e.png"></li>
 </ul>
 <p>一个智能合约不一样的地方主要是constructor body部分</p>
 <ul>
 <li>Runtime是真正执行的代码部分，包含了selector、wrapper、function body 和metadata hash 四个部分</li>
 </ul>
-<h2 id="函数selector"><a href="#函数selector" class="headerlink" title="函数selector"></a>函数selector</h2><p>函数选择器也可以看作是一个路由，内容判断了用户是要调用哪一个函数。<br>在选择执行函数之前还需要进行内存申请和msg.data的长度检查，是否小于4个字节，若小于，则不继续执行<br><img src="attachments/5f5fa86f.png" alt="5f5fa86f.png"><br>而selector中判断路由的部分在上一篇中有提到：<br>假设一个函数是a(uint256){}，则使用<code>web3.sha3(&quot;a(uint256)&quot;);</code>计算出<code>a(uint256)</code>的签名，计算结果为<br>“0xf0fdf83467af68171df09204c0b00056c1e4c80e368b3fff732778b858f7966d”，之后取前四字节”f0fdf834”作为a(uint256)函数的签名。</p>
+<h2 id="函数selector"><a href="#函数selector" class="headerlink" title="函数selector"></a>函数selector</h2><p>函数选择器也可以看作是一个路由，内容判断了用户是要调用哪一个函数。<br>在选择执行函数之前还需要进行内存申请和msg.data的长度检查，是否小于4个字节，若小于，则不继续执行<br><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/5f5fa86f.png" alt="5f5fa86f.png"><br>而selector中判断路由的部分在上一篇中有提到：<br>假设一个函数是a(uint256){}，则使用<code>web3.sha3(&quot;a(uint256)&quot;);</code>计算出<code>a(uint256)</code>的签名，计算结果为<br>“0xf0fdf83467af68171df09204c0b00056c1e4c80e368b3fff732778b858f7966d”，之后取前四字节”f0fdf834”作为a(uint256)函数的签名。</p>
 <p>根据ABI<a href="https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html" target="_blank" rel="noopener">Application Binary Interface Specification — Solidity 0.4.24 documentation</a>里的标准，假设用户调用balabceOf(address)是，参数就会规范成<code>0x70a08231000000000000000000000000ca35b7d915458ef540ade6068dfe2f44e8fa733c</code>这样的格式，前四个字节<code>70a08231</code>就使用路由判断。将selecor中的判断转为伪代码：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">70a08231 == msg.data[0x00:0x20] / 0x0100000000000000000000000000000000000000000000000000000000 &amp; 0xffffffff;</span><br></pre></td></tr></table></figure></p>
 <p>如果用户调用的函数不存在，若存在 fallback function, 则执行它，否则revert。</p>
-<h2 id="函数wrapper"><a href="#函数wrapper" class="headerlink" title="函数wrapper"></a>函数wrapper</h2><p>主要是检查payable部分，解析用户的参数，并调转到真正的函数部分以及通过memory返回函数的return<br><img src="attachments/a6b4d1a1.png" alt="a6b4d1a1.png"></p>
-<h2 id="函数body"><a href="#函数body" class="headerlink" title="函数body"></a>函数body</h2><p>这个部分才是合约的核心部分，也是各个合约不一样的地方<br>函数体的开头都有JUMPDEST，对应前面wrapper的jump。<br><img src="attachments/61818cc4.png" alt="61818cc4.png"></p>
+<h2 id="函数wrapper"><a href="#函数wrapper" class="headerlink" title="函数wrapper"></a>函数wrapper</h2><p>主要是检查payable部分，解析用户的参数，并调转到真正的函数部分以及通过memory返回函数的return<br><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/a6b4d1a1.png" alt="a6b4d1a1.png"></p>
+<h2 id="函数body"><a href="#函数body" class="headerlink" title="函数body"></a>函数body</h2><p>这个部分才是合约的核心部分，也是各个合约不一样的地方<br>函数体的开头都有JUMPDEST，对应前面wrapper的jump。<br><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/61818cc4.png" alt="61818cc4.png"></p>
 <h2 id="元数据哈希"><a href="#元数据哈希" class="headerlink" title="元数据哈希"></a>元数据哈希</h2><p>这一部分可参见官方文档<a href="https://solidity-cn.readthedocs.io/zh/develop/metadata.html" target="_blank" rel="noopener">合约的元数据 — Solidity develop 文档</a></p>
 <p>最后这一段被解析成字节码，但是其中有很多invalid，实际上这只是一个串<code>0xa1 0x65 &#39;b&#39; &#39;z&#39; &#39;z&#39; &#39;r&#39; &#39;0&#39;</code>开头的hash值。</p>
-<p><img src="attachments/ea2e30bf.png" alt="ea2e30bf.png"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ea2e30bf.png" alt="ea2e30bf.png"></p>
+<h1 id="下一步工作"><a href="#下一步工作" class="headerlink" title="下一步工作"></a>下一步工作</h1><p>1.自己写合约，调试分析其合约字节码<br>2.分析以太坊上没有公布合约源码的智能合约，挖掘漏洞<br>3.实现自动化工具</p>
+<p>参考文章：<a href="https://paper.seebug.org/640/" target="_blank" rel="noopener">https://paper.seebug.org/640/</a></p>
 
           
         
