@@ -248,7 +248,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2020/02/24/chrome插件开发/" itemprop="url">Untitled</a></h1>
+                <a class="post-title-link" href="/2020/02/24/chrome插件开发/" itemprop="url">浏览器插件(一)</a></h1>
         
 
         <div class="post-meta">
@@ -260,7 +260,7 @@
               
                 <span class="post-meta-item-text">Posted on</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-24T16:36:50+08:00">
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2020-02-24T16:39:03+08:00">
                 2020-02-24
               </time>
             
@@ -300,7 +300,7 @@
       
         
           
-            <h1 id="浏览器插件"><a href="#浏览器插件" class="headerlink" title="浏览器插件"></a>浏览器插件</h1><h2 id="chrome插件开发"><a href="#chrome插件开发" class="headerlink" title="chrome插件开发"></a>chrome插件开发</h2><p>参考文档：<br><a href="https://crxdoc-zh.appspot.com/extensions/getstarted" target="_blank" rel="noopener">入门：建立 Chrome 扩展程序 - Google Chrome 扩展程序开发文档（非官方中文版）</a><br><a href="https://github.com/sxei/chrome-plugin-demo" target="_blank" rel="noopener">GitHub - sxei/chrome-plugin-demo: 《Chrome插件开发全攻略》配套完整Demo，欢迎clone体验</a></p>
+            <h2 id="chrome插件开发"><a href="#chrome插件开发" class="headerlink" title="chrome插件开发"></a>chrome插件开发</h2><p>参考文档：<br><a href="https://crxdoc-zh.appspot.com/extensions/getstarted" target="_blank" rel="noopener">入门：建立 Chrome 扩展程序 - Google Chrome 扩展程序开发文档（非官方中文版）</a><br><a href="https://github.com/sxei/chrome-plugin-demo" target="_blank" rel="noopener">GitHub - sxei/chrome-plugin-demo: 《Chrome插件开发全攻略》配套完整Demo，欢迎clone体验</a></p>
 <h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>  年前因为公司一个项目接触了浏览器插件的开发，其实在这之前大学的时候在加密网盘项目中也接触过浏览器插件的开发，但是那时候只写了一个popup页面。<br>  Chrome插件是一个用Web技术开发、用来增强浏览器功能的软件,Chrome浏览器扩展开发算是相当简单的，基本只要掌握HTML+CSS+Javascript，即可快速开发一个属于你的Chrome插件！它其实就是一个由HTML、CSS、JS、图片等资源组成的一个.crx后缀的压缩包.</p>
 <h3 id="核心部分"><a href="#核心部分" class="headerlink" title="核心部分"></a>核心部分</h3><ul>
 <li><p>manifest<br>插件的入口。配置了整个插件所需要用到的东西，例如插件的名称和图标，插件的动作，和对应动作的执行的js文件等等。<br>代码示例：<a href="https://developer.chrome.com/extensions/manifest" target="_blank" rel="noopener">Manifest File Format - Google Chrome</a></p>
@@ -312,9 +312,9 @@
 </ul>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">  &#123;</span><br><span class="line">  // 会一直常驻的后台JS或后台页面</span><br><span class="line">    &quot;background&quot;:</span><br><span class="line">    &#123;</span><br><span class="line">        // 2种指定方式，如果指定JS，那么会自动生成一个背景页</span><br><span class="line">        &quot;page&quot;: &quot;background.html&quot;</span><br><span class="line">        //&quot;scripts&quot;: [&quot;js/background.js&quot;]</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
-<li>运行环境（调试）<br><img src="attachments/f110b974.png" alt="f110b974.png"></li>
+<li>运行环境（调试）<br><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/f110b974.png" alt="f110b974.png"></li>
 </ul>
-<p><img src="attachments/1f025365.png" alt="1f025365.png"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/1f025365.png" alt="1f025365.png"></p>
 <ul>
 <li>event-pages<br>前面提到background的生命周期很长，但是长时间的挂载后台会消耗性能，Google又弄一个event-pages，在配置文件上，它与background的唯一区别就是多了一个persistent参数：<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    &quot;background&quot;:</span><br><span class="line">    &#123;</span><br><span class="line">        &quot;scripts&quot;: [&quot;event-page.js&quot;],</span><br><span class="line">        &quot;persistent&quot;: false</span><br><span class="line">    &#125;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 </li>
@@ -325,9 +325,9 @@
 <ul>
 <li><p>popup<br>点击browser_action或者page_action图标时打开的一个小窗口网页,实际上是一个html页面(safari13后不再是html页面)，同样可以执行js脚本，但是弹窗关闭，脚本生命周期结束。<br>popup的页面可以在配置文件中通过default_popup指定，也可以在js中通过setPopup()方法指定，可以用该方法执行页面的跳转，但这种方式的页面跳转会有延迟，需要页面重新加载才会跳转，另一种跳转方法是“window.location.href=”popup.html””<br>在权限上，它和background非常类似，它们之间最大的不同是生命周期的不同。值得注意的是：popup中可以直接通过chrome.extension.getBackgroundPage()获取background的window对象，实现在<strong>popup中可以直接调用background中的方法。</strong></p>
 <ul>
-<li>运行环境（调试）<br><img src="attachments/a9ef4bb9.png" alt="a9ef4bb9.png"></li>
+<li>运行环境（调试）<br><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/a9ef4bb9.png" alt="a9ef4bb9.png"></li>
 </ul>
-<p><img src="attachments/ecd7615a.png" alt="ecd7615a.png"></p>
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ecd7615a.png" alt="ecd7615a.png"></p>
 <ul>
 <li><p>content-scripts<br>页面内容脚本，就是通过插件向一个页面注入脚本，使得页面在加载前或者加载后等阶段执行脚本命令（虽然名为script，其实还可以包括css的）。最常见的操作：广告屏蔽、页面CSS定制，等等。<br>content-scripts和原始页面共享DOM，但是不共享JS，如要访问页面JS（例如某个JS变量），只能通过injected js来实现。content-scripts不能访问绝大部分chrome.xxx.api，除了下面这4种：</p>
 <ol>
@@ -491,6 +491,7 @@
 <h3 id="mac下插件安装路径"><a href="#mac下插件安装路径" class="headerlink" title="mac下插件安装路径"></a>mac下插件安装路径</h3><p>/Users/xxx/Library/Application Support/Google/Chrome/Default/Extensions</p>
 <h3 id="chrome插件转Firefox插件以及safari插件"><a href="#chrome插件转Firefox插件以及safari插件" class="headerlink" title="chrome插件转Firefox插件以及safari插件"></a>chrome插件转Firefox插件以及safari插件</h3><p>这也是在项目中遇到的需求。<br><a href="https://developer.mozilla.org/zh-CN/docs/Mozilla/Add-ons/WebExtensions" target="_blank" rel="noopener">浏览器扩展 - Mozilla 产品与私有技术 | MDN</a>这是firefox的官方插件开发文档，点开一个简单示例，我们会发现和chrome的插件开发模式是基本一致。细微差别可以通过终端提示信息进行修改。<br>对于Safari，差别相对较大。safari12及以前的版本，插件的模式和chrome类似，是一个独立插件安装包，安装到浏览器即可，但是api和chrome不兼容，官方开发文档：<a href="https://developer.apple.com/library/archive/documentation/Tools/Conceptual/SafariExtensionGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40009977-CH1-SW1" target="_blank" rel="noopener">About Safari Extensions</a><br>但是Safari12之后的版本，插件作了改变，不再是一个可以直接用js和html实现的独立安装包，而是一个本地应用，应用包含了插件，也就是安装一个包含插件的本地应用，插件就默认安装了。因此需要使用objective-c等语言进行开发，而且版本12中的popover（也就是chrome重的popup）窗口，由原来的html页面变成了一个webview。相对没有ios开发基础的人来说，难度变大了。官方文档<a href="https://developer.apple.com/documentation/safariservices/safari_app_extensions/building_a_safari_app_extension" target="_blank" rel="noopener">Building a Safari App Extension | Apple Developer Documentation</a>，但是感觉并不能对开发有啥帮助。</p>
 <h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>chrome插件除了以上功能外，还有很多其他的，比如通知、devtools扩展、右键菜单等等，除此，还有插件的打包、安装、以及发布等，这些网上可查找内容较多，不再赘述。项目结束有几个月了，才写下文档，开发过程中遇到一些问题，解决了之后，记忆已经有些模糊了。这篇文章大多参照<a href="https://github.com/sxei/chrome-plugin-demo" target="_blank" rel="noopener">GitHub - sxei/chrome-plugin-demo: 《Chrome插件开发全攻略》配套完整Demo，欢迎clone体验</a>，结合了自己的使用体验。下一篇将会介绍浏览器插件的安全。</p>
+<h2 id="chrome插件安全"><a href="#chrome插件安全" class="headerlink" title="chrome插件安全"></a>chrome插件安全</h2><p> 待续……</p>
 
           
         
