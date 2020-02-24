@@ -90,7 +90,7 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/1f025365.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/a9ef4bb9.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/ecd7615a.png">
-<meta property="og:updated_time" content="2020-02-24T09:33:27.059Z">
+<meta property="og:updated_time" content="2020-02-24T09:36:46.977Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="浏览器插件">
 <meta name="twitter:description" content="chrome插件开发参考文档：入门：建立 Chrome 扩展程序 - Google Chrome 扩展程序开发文档（非官方中文版）GitHub - sxei/chrome-plugin-demo: 《Chrome插件开发全攻略》配套完整Demo，欢迎clone体验 简介  年前因为公司一个项目接触了浏览器插件的开发，其实在这之前大学的时候在加密网盘项目中也接触过浏览器插件的开发，但是那时候只写了一">
@@ -396,24 +396,24 @@
 </li>
 </ul>
 <ul>
-<li><p>popup或者bg与content通信<br>1.background.js或者popup.js向content-script</p>
-<ul>
-<li><p>background.js或者popup.js发送</p>
+<li><p>popup或者bg与content通信</p>
+<ol>
+<li><p>background.js或者popup.js向content-script<br>1.background.js或者popup.js发送</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">function sendMessageToContentScript(message, callback)</span><br><span class="line">&#123;</span><br><span class="line">  chrome.tabs.query(&#123;active: true, currentWindow: true&#125;, function(tabs)</span><br><span class="line">  &#123;</span><br><span class="line">    chrome.tabs.sendMessage(tabs[0].id, message, function(response)</span><br><span class="line">    &#123;</span><br><span class="line">      if(callback) callback(response);</span><br><span class="line">    &#125;);</span><br><span class="line">  &#125;);</span><br><span class="line">&#125;</span><br><span class="line">sendMessageToContentScript(&#123;cmd:&apos;test&apos;, value:&apos;你好，我是popup！&apos;&#125;, function(response)</span><br><span class="line">&#123;</span><br><span class="line">  console.log(&apos;来自content的回复：&apos;+response);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>content-script.js接收</p>
+<p>2.content-script.js接收</p>
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)</span><br><span class="line">   &#123;</span><br><span class="line">     // console.log(sender.tab ?&quot;from a content script:&quot; + sender.tab.url :&quot;from the extension&quot;);</span><br><span class="line">     if(request.cmd == &apos;test&apos;) alert(request.value);</span><br><span class="line">     sendResponse(&apos;我收到了你的消息！&apos;);</span><br><span class="line">   &#125;);</span><br></pre></td></tr></table></figure>
-<p>网上一些用法是<code>chrome.extension.onMessage</code>,貌似没有区别。<br>2.content-script发消息给后台</p>
+<p>网上一些用法是<code>chrome.extension.onMessage</code>,貌似没有区别。</p>
 </li>
-<li><p>content-script.js发送</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  chrome.runtime.sendMessage(&#123;greeting: &apos;你好，我是content-script呀，我主动发消息给后台！&apos;&#125;, function(response) &#123;</span><br><span class="line">console.log(&apos;收到来自后台的回复：&apos; + response);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>background.js 或者 popup.js接收</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    // 监听来自content-script的消息</span><br><span class="line">chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)</span><br><span class="line">&#123;</span><br><span class="line">  console.log(&apos;收到来自content-script的消息：&apos;);</span><br><span class="line">  console.log(request, sender, sendResponse);</span><br><span class="line">  sendResponse(&apos;我是后台，我已收到你的消息：&apos; + JSON.stringify(request));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
-<p>注：<br>1.content_scripts向popup主动发消息的前提是popup必须打开！否则需要利用background作中转；<br>2.如果background和popup同时监听，那么它们都可以同时收到消息，但是只有一个可以sendResponse，一个先发送了，那么另外一个再发送就无效；</p>
-</li>
-</ul>
-</li>
+</ol>
+<p>2.content-script发消息给后台<br>  1.content-script.js发送</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">  chrome.runtime.sendMessage(&#123;greeting: &apos;你好，我是content-script呀，我主动发消息给后台！&apos;&#125;, function(response) &#123;</span><br><span class="line">console.log(&apos;收到来自后台的回复：&apos; + response);</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+</code></pre><p>  2.background.js 或者 popup.js接收</p>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">    // 监听来自content-script的消息</span><br><span class="line">chrome.runtime.onMessage.addListener(function(request, sender, sendResponse)</span><br><span class="line">&#123;</span><br><span class="line">  console.log(&apos;收到来自content-script的消息：&apos;);</span><br><span class="line">  console.log(request, sender, sendResponse);</span><br><span class="line">  sendResponse(&apos;我是后台，我已收到你的消息：&apos; + JSON.stringify(request));</span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
+
+注：
+1).content_scripts向popup主动发消息的前提是popup必须打开！否则需要利用background作中转；
+2).如果background和popup同时监听，那么它们都可以同时收到消息，但是只有一个可以sendResponse，一个先发送了，那么另外一个再发送就无效；
+</code></pre></li>
 <li><p>injected-script与content-script通信<br>content-script与injected-script之间唯一共享的是页面的DOM。有2种方法可以实现二者通讯：</p>
 <ol>
 <li><p>通过window.postMessage和window.addEventListener来实现二者消息通讯：</p>
