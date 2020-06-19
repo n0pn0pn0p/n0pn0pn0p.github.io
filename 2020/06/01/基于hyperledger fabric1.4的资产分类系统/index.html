@@ -90,7 +90,8 @@
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/image-20200531214035600.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/image-20200531212212447.png">
 <meta property="og:image" content="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/image-20200531223615377.png">
-<meta property="og:updated_time" content="2020-06-01T06:18:42.300Z">
+<meta property="og:image" content="http://young.0kami.cn/2020/06/01/基于hyperledger%20fabric1.4的资产分类系统/基于hyperledger%20fabric1.4的资产分类系统.assets/image-20200619135756392.png">
+<meta property="og:updated_time" content="2020-06-19T05:58:14.518Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基于hyperledger fabric1.4的资产分类系统">
 <meta name="twitter:description" content="需求分析xx工具是一个全网资产探测引擎，其中一个功能是自动发现全网被挂马或者被篡改的网站并记录下来。现在欲将这些资产信息写到区块链上，通过链码实现增删改查的功能，并通过可视化界面进行操作和分类展示。 一条资产数据记录包含ip、port、label、domain、maindata等字段内容。系统最终需能够根据指定字段名或者时间段等过滤展示，因此区块链系统需要支持富查询，故stateDB选择couch">
@@ -457,6 +458,10 @@
 <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/configtxgen -profile OneOrgChannel -inspectChannelCreateTx ./artifacts/channel.tx</span><br></pre></td></tr></table></figure>
 <p>是否与configtx.yaml中的<code>Capabilities</code>部分一致。否则修改configtx.yaml，重新生成证书和通道配置。</p>
 </li>
+<li><p>couchDB查询结果按顺序排序。根据官方网站给出的语法：<a href="https://docs.couchdb.org/en/stable/api/database/find.html#find-sort，在实际运用中会报错“&quot;error&quot;" target="_blank" rel="noopener">https://docs.couchdb.org/en/stable/api/database/find.html#find-sort，在实际运用中会报错“&quot;error&quot;</a>: “no_usable_index”,”reason”: “No index exists for this sort, try indexing by the sort fields.””。但数据库中确实已经创建了该索引。</p>
+<p>实际上，错误原因是：如果创建的一条索引包含了多条属性，那么查询是指定sort就要包含响应的所有属性。</p>
+<p><img src="基于hyperledger fabric1.4的资产分类系统.assets/image-20200619135756392.png" alt="image-20200619135756392"></p>
+</li>
 </ol>
 <h2 id="下一步工作"><a href="#下一步工作" class="headerlink" title="下一步工作"></a>下一步工作</h2><p>目前对fabric有了一个初步认识，但对于具体的功能模块还需要进一步学习，例如：MSP，BCCSP，Fabric-CA，共识机制等等，这将是后面的一部分工作，另外，熟悉原理后将对fabric的算法进行替换，替换为国密，以及对Fabric-CA进行替换等。另外，对于fabric2.0，需要进一步了解与1.4版本的差异之处。</p>
 <p>项目地址：</p>
@@ -505,6 +510,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2020/06/04/blockchain-explorer/" rel="prev" title="">
+                 <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -581,7 +590,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-count">9</span>
                   <span class="site-state-item-name">posts</span>
                 </a>
               </div>
