@@ -1,0 +1,176 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title>基于hyperledger fabric1.4的资产分类系统 · yogurt</title><meta name="description" content="需求分析xx工具是一个全网资产探测引擎，其中一个功能是自动发现全网被挂马或者被篡改的网站并记录下来。现在欲将这些资产信息写到区块链上，通过链码实现增删改查的功能，并通过可视化界面进行操作和分类展示。
+一条资产数据记录包含ip、port、label、domain、maindata等字段内容。系统最终需"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">yogurt</a></h3></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a target="_blank" rel="noopener" href="https://www.caicai.me"> CaiCai </a><span>&</span><a target="_blank" rel="noopener" href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">Home</a></li><li><a href="/about">Sobre</a></li><li><a href="/archives">Arquivo</a></li><li><a href="/links">Links</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>基于hyperledger fabric1.4的资产分类系统</a></h3></div><div class="post-content"><h2 id="需求分析"><a href="#需求分析" class="headerlink" title="需求分析"></a>需求分析</h2><p>xx工具是一个全网资产探测引擎，其中一个功能是自动发现全网被挂马或者被篡改的网站并记录下来。现在欲将这些资产信息写到区块链上，通过链码实现增删改查的功能，并通过可视化界面进行操作和分类展示。</p>
+<p>一条资产数据记录包含ip、port、label、domain、maindata等字段内容。系统最终需能够根据指定字段名或者时间段等过滤展示，因此区块链系统需要支持富查询，故stateDB选择couchDB</p>
+<p>系统主要包由区块链系统、链码、网站后台、前端四部分构成。底层基于hyperledger fabric进行构建。</p>
+<p>数据源由xx工具收集后经过数据清洗写入到文件中。后台读取文件内容后解析，调用链码写入区块链和couchDB；并通过调用链码实现根据时间段删除以及查询等功能。</p>
+<p>资产数据每天采集一次，约10万条左右，数据量较大，因此写入区块链采用go routine实现。</p>
+<h2 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建"></a>环境搭建</h2><h3 id="节点拓扑图"><a href="#节点拓扑图" class="headerlink" title="节点拓扑图"></a>节点拓扑图</h3><p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/image-20200531214035600.png" alt="image-20200531214035600"></p>
+<h3 id="工具安装"><a href="#工具安装" class="headerlink" title="工具安装"></a>工具安装</h3><p>项目中fabric的运行采用Docker的方式，因此需要安装Docker，docker-compose（用于同时启动多个Docker镜像，且可以共享同一个网络）；另外fabric使用golang开发，并且SDK选择了fabric-sdk-go，因此需要安装go。</p>
+<h4 id="1-Docker"><a href="#1-Docker" class="headerlink" title="1.Docker"></a>1.Docker</h4><p><strong>17.03.0-ce或以上版本</strong>，具体安装方式可以在网上找教程，此处以centOS为例</p>
+<ul>
+<li><p>卸载旧版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum remove docker \</span><br><span class="line">           docker-common \</span><br><span class="line">           docker-selinux \</span><br><span class="line">           docker-engine</span><br></pre></td></tr></table></figure></li>
+<li><p>安装依赖</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum install -y yum-utils \</span><br><span class="line">           device-mapper-persistent-data \</span><br><span class="line">           lvm2</span><br></pre></td></tr></table></figure></li>
+<li><p> yum 软件源(否则会很慢)</p>
+</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum-config-manager \</span><br><span class="line">    --add-repo \</span><br><span class="line">    https://mirrors.ustc.edu.cn/docker-ce/linux/centos/docker-ce.repo</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>安装Docker CE</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo yum makecache fast</span><br><span class="line">$ sudo yum install docker-ce</span><br></pre></td></tr></table></figure></li>
+<li><p>启动Docker CE</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo systemctl enable docker</span><br><span class="line">$ sudo systemctl start docker</span><br></pre></td></tr></table></figure></li>
+<li><p>建立Docker用户组和用户</p>
+<p>为了避免使用root用户，需要使用 <code>docker</code> 的用户加入 <code>docker</code> 用户组</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">$ sudo groupadd docker</span><br><span class="line">$ sudo usermod -aG docker $USER</span><br><span class="line">$ sudo service docker restart</span><br></pre></td></tr></table></figure></li>
+<li><p>查看Docker版本和测试</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ docker -v</span><br><span class="line">$ docker run hello-world</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-docker-compose"><a href="#2-docker-compose" class="headerlink" title="2.docker-compose"></a>2.docker-compose</h4><p><strong>1.8或者以上版本</strong></p>
+<ul>
+<li><p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose &amp;&amp; \</span><br><span class="line">sudo chmod +x /usr/local/bin/docker-compose</span><br></pre></td></tr></table></figure></li>
+<li><p>查看版本</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker-compose version</span><br></pre></td></tr></table></figure>
+
+<p>其它系统安装方式：<a target="_blank" rel="noopener" href="https://docs.docker.com/compose/install/">https://docs.docker.com/compose/install/</a></p>
+</li>
+</ul>
+<h4 id="3-go"><a href="#3-go" class="headerlink" title="3.go"></a>3.go</h4><p><strong>1.9.x或者以上版本</strong>，以go1.13为例</p>
+<ul>
+<li><p>下载</p>
+<p>sudo wget <a target="_blank" rel="noopener" href="https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz">https://dl.google.com/go/go1.13.4.linux-amd64.tar.gz</a></p>
+</li>
+<li><p>安装</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ sudo tar -xvf go1.13.4.linux-amd64.tar.gz</span><br><span class="line">$ sudo mv go /usr/local</span><br></pre></td></tr></table></figure></li>
+<li><p>设置环境变量</p>
+<p>环境变量需要设置的是<code>GOROOT</code>、<code>GOPATH</code>、<code>PATH</code>,<code>GOROOT</code>是安装Go软件包的位置，<code>GOPATH</code>是工作目录的位置，要设置全局环境变量就把下面代码写入<code>/etc/profile</code>或者<code>/etc/bashrc</code>，用户变量就写入<code>~/.profile</code>，或者<code>~/.bashrc</code>.</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">export GOROOT=/usr/local/go</span><br><span class="line">export GOPATH=$HOME/Projects/go</span><br><span class="line">export PATH=$GOPATH/bin:$GOROOT/bin:$PATH</span><br></pre></td></tr></table></figure>
+
+<p>这里要注意，go的很多包在下载的时候会很慢或失败，可以使用代理或者GOPROXY解决。</p>
+</li>
+</ul>
+<h2 id="代码结构与片段"><a href="#代码结构与片段" class="headerlink" title="代码结构与片段"></a>代码结构与片段</h2><h3 id="代码框架图"><a href="#代码框架图" class="headerlink" title="代码框架图"></a>代码框架图</h3><p>整个系统采用前后端分离模式，后端通过http接口与前端通信。前端代码不包含在该项目中。后端web采用gin框架。底层搭建fabric环境，通过fabric-sdk-go实现对区块链以及链码进行操作。</p>
+<p>​        <img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/image-20200531212212447.png" alt="image-20200531212212447"></p>
+<h3 id="fabric部署"><a href="#fabric部署" class="headerlink" title="fabric部署"></a>fabric部署</h3><h4 id="1-公私钥和证书"><a href="#1-公私钥和证书" class="headerlink" title="1.公私钥和证书"></a>1.公私钥和证书</h4><p>配置文件为<code>fixtures</code>下的<code>crypto-config.yaml</code>,根据实际节点情况进行修改，修改好后执行命令：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/cryptogen generate --config=./crypto-config.yaml</span><br></pre></td></tr></table></figure>
+
+<p>执行成功会生成<code>crypto-config</code>目录。</p>
+<h4 id="2-创世区块"><a href="#2-创世区块" class="headerlink" title="2.创世区块"></a>2.创世区块</h4><p>该步骤需要配置文件<code>configtx.yaml</code>，该配置中指定了节点组织架构，访问策略等，<strong>需要特别说明是的区块的大小以及区块出块时间也在该配置文件中</strong>。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ mkdir artifacts</span><br><span class="line">$ ./bin/configtxgen -profile OneOrgOrdererGenesis -outputBlock ./artifacts/genesis.block</span><br></pre></td></tr></table></figure>
+
+<h4 id="3-生成通道"><a href="#3-生成通道" class="headerlink" title="3.生成通道"></a>3.生成通道</h4><p> <code>mychannel</code>为通道id。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/configtxgen -profile OneOrgOrdererGenesis -outputCreateChannelTx ./artifacts/mychannel.tx -channelID mychannel</span><br></pre></td></tr></table></figure>
+
+<h4 id="4-生成锚节点更新"><a href="#4-生成锚节点更新" class="headerlink" title="4.生成锚节点更新"></a>4.生成锚节点更新</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/configtxgen -profile OneOrgChannel -outputAnchorPeersUpdate ./artifacts/Org1MSPanchors.tx -channelID dbappchannel -asOrg Org1MSP</span><br></pre></td></tr></table></figure>
+
+<p><strong>以上步骤1.2.3.4可通过执行<code>fixtures</code>下的<code>start.sh</code>脚本一件完成</strong></p>
+<h3 id="运行节点"><a href="#运行节点" class="headerlink" title="运行节点"></a>运行节点</h3><h4 id="1-准备docker配置文件"><a href="#1-准备docker配置文件" class="headerlink" title="1.准备docker配置文件"></a>1.<strong>准备docker配置文件</strong></h4><p>配置fixtrues下的docker-compose.yaml文件，包含的服务有orderer.example.com、ca.org1.example.com、peer0.org1.example.com、peer1.org1.example.com和couchdb五个Docker。</p>
+<p>配置时要特别注意<code>ORDERER_GENERAL_LOCALMSPID</code>,<code>FABRIC_CA_SERVER_CA_KEYFILE</code>,<code>CORE_PEER_NETWORKID</code>,<code>CORE_PEER_LOCALMSPID</code>等参数。另外要注意网络问题，特别是多节点部署时，通常后面启动报错是会有网络不通的问题，可通过<code>docker network ls</code>,<code>docker inspect $network_name</code>等命令查看网络问题。</p>
+<h4 id="2-启动docker"><a href="#2-启动docker" class="headerlink" title="2.启动docker"></a>2.启动docker</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ cd fixtures &amp;&amp; docker-compose up --force-recreate -d</span><br><span class="line">$ docker ps -a</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://raw.githubusercontent.com/n0pn0pn0p/n0pn0pn0p.github.io/master/myimages/image-20200531223615377.png" alt="image-20200531223615377"></p>
+<p>如果显示有节点Exited，可以用<code>docker logs $containerID</code>查看错误信息，根据具体错误信息排查。 </p>
+<h4 id="3-停止docker"><a href="#3-停止docker" class="headerlink" title="3.停止docker"></a>3.停止docker</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cd fixtures &amp;&amp; docker-compose down</span><br></pre></td></tr></table></figure>
+
+<h3 id="安装调用链码"><a href="#安装调用链码" class="headerlink" title="安装调用链码"></a>安装调用链码</h3><h4 id="1-命令行方式"><a href="#1-命令行方式" class="headerlink" title="1.命令行方式"></a>1.命令行方式</h4><ul>
+<li><p>启动容器</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ docker exec -it cli bash</span><br></pre></td></tr></table></figure></li>
+<li><p>创建Channel</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ peer channel create -o orderer.example.com:7050 -c mychannel -f ./mychannel.tx</span><br></pre></td></tr></table></figure></li>
+<li><p>Peer加入Channel</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ peer channel join -b mychannel.block</span><br></pre></td></tr></table></figure></li>
+<li><p> 安装智能合约</p>
+</li>
+</ul>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">peer chaincode install -n mycc -p projectPath/chaincode/go/example02/cmd/ -v 1.0</span><br></pre></td></tr></table></figure>
+
+<p>  这里链码使用的是<a target="_blank" rel="noopener" href="https://github.com/hyperledger/fabric-samples">fabric-sample</a>的例子</p>
+<ul>
+<li><p>实例化智能合约</p>
+<p>区块初始化数据为a为100，b为200</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ peer chaincode instantiate -o orderer.example.com:7050 -C mychannel -n mycc -v 1.0 -c &#x27;&#123;&quot;Args&quot;:[&quot;init&quot;,&quot;a&quot;,&quot;100&quot;,&quot;b&quot;,&quot;200&quot;]&#125;&#x27; -P &quot;AND (&#x27;Org1MSP.peer&#x27;)&quot;</span><br></pre></td></tr></table></figure></li>
+<li><p> 查询query</p>
+</li>
+</ul>
+<p>  Peer上查询a，显示100</p>
+  <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ peer chaincode query -C mychannel -n mycc -c &#x27;&#123;&quot;Args&quot;:[&quot;query&quot;,&quot;a&quot;]&#125;&#x27;</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><p>调用invoke</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">peer chaincode invoke -C mychannel -n mycc -c &#x27;&#123;&quot;Args&quot;:[&quot;invoke&quot;,&quot;a&quot;,&quot;b&quot;,&quot;10&quot;]&#125;&#x27;</span><br></pre></td></tr></table></figure></li>
+</ul>
+<h4 id="2-fabric-sdk方式"><a href="#2-fabric-sdk方式" class="headerlink" title="2.fabric-sdk方式"></a>2.fabric-sdk方式</h4><p>​    若采用sdk调用链码，需要两个部分，一个是配置文件config.yaml，另一个是调用代码。</p>
+<ul>
+<li><p>config.yaml</p>
+<p>配置文件在根目录下，配置时需注意<code>channels</code>,<code>mspid</code>参数要与前面的配置保持一致，否则会报错。</p>
+</li>
+<li><p>代码部分</p>
+<p>代码部分需要使用依赖管理工具dep,在Gopkg.toml中指定fabric-sdk-go的版本，当然也可以用其它的包管理工具。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ignored = [&quot;github.com/sumapchain/chaincode&quot;]</span><br><span class="line"></span><br><span class="line">[[constraint]]</span><br><span class="line">  # Release v1.0.0-alpha4</span><br><span class="line">  name = &quot;github.com/hyperledger/fabric-sdk-go&quot;</span><br><span class="line">  revision = &quot;a906355f73d060d7bf95874a9e90dc17589edbb3&quot;</span><br></pre></td></tr></table></figure>
+
+<p>代码实现在sdkInit目录下，start.go的init中指定了参数，该部分需要根据实际情况进行修改。sdk_setup.go实现了三个函数，初始化fabricSDK—SetupSDK()，创建通道并将指定的Peers加入—CreateChannel()，安装并实例化链码—InstallAndInstantiateCC()</p>
+</li>
+<li><p>调用合约</p>
+<p>eduServide.go是对世界状态数据库进行增删改查的操作，通过一下方式进行调用链码，需要注意<code>Execute</code>和<code>Query</code>,新增或者删除操作，是需要发起交易写入区块链的，因此需要用<code>Execute</code>，若用<code>Query</code>，则操作无效，但不会报错。</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">req := channel.Request&#123;ChaincodeID: t.ChaincodeID, Fcn: &quot;register&quot;, Args: [][]byte&#123;[]byte(key), b&#125;&#125;</span><br><span class="line">respone, err := t.Client.Execute(req)</span><br></pre></td></tr></table></figure></li>
+<li><p>富查询</p>
+<p>系统中较多涉及到富查询功能，在实现时通过构造查询语句queryString，将queryString作为参数传递给链码执行返回查询结果。对于富查询语句可参考<a target="_blank" rel="noopener" href="https://docs.couchdb.org/en/latest/api/database/find.html#find-selectors%E5%92%8Chttps://hyperledger-fabric.readthedocs.io/en/release-2.0/couchdb_tutorial.html#query-the-couchdb-state-database">https://docs.couchdb.org/en/latest/api/database/find.html#find-selectors和https://hyperledger-fabric.readthedocs.io/en/release-2.0/couchdb_tutorial.html#query-the-couchdb-state-database</a></p>
+</li>
+<li><p>系统后台</p>
+<p>采用gin框架，基本没有什么问题，就是在数据上传时由于数据量大需要采用goroutine。</p>
+</li>
+</ul>
+<h2 id="问题合集"><a href="#问题合集" class="headerlink" title="问题合集"></a>问题合集</h2><h3 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h3><p>hyperledger fabric的配置是一个较为繁琐的过程，整个系统的开发过程中，遇到了各种问题，特别是在前期的环境搭建过程，到目前为止，对一些配置也没有完全仔细的研究过，对于改变网络架构的情况，应该还会遇到很多意想不到的问题。但在这个简单的项目开发过程中，学习到了很多，对fabric1.4有了更深的认识，以及对docker，go等有了更多的学习。</p>
+<p>过程中遇到的问题，只记录了部分，在此记录一下，帮助有需要的朋友少走一点弯路。</p>
+<ol>
+<li><p>Unable to initialize the Fabric SDK: failed to create SDK: failed to initialize configuration: unable to load identity config: failed to initialize identity config from config backend: failed to create identity config from backends: failed to load all CA configs : failed to load server certs: open : no such file or directory</p>
+<p>解决办法：检查docker-compose.ymal配置文件，ca的部分是否有错误</p>
+</li>
+<li><p>stub.DelState()执行不成功<br>解决办法：要注意Invoke()和Query()的区别，调用的地方不能弄错，删除数据库操作需要<code>Execute</code></p>
+</li>
+<li><p>Chaincode installed<br>Unable to install and instantiate the chaincode: failed to instantiate the chaincode: sending deploy transaction proposal failed: Transaction processing for endorser [localhost:7051]: Chaincode status Code: (500) UNKNOWN. Description: chaincode registration failed: container exited with 0</p>
+<p>解决办法：peer节点与其他节点之间的网络不通。查看docker-compose.yml文件中的配置，多个docker是不是在同一个网络</p>
+</li>
+<li><p>链码修改后不生效</p>
+<p>解决办法：重启服务前要删除创建链码生成的docker image，删除命令可以参考MakeFile文件</p>
+</li>
+<li><p>创建应用通道失败: create channel failed: create channel failed: SendEnvelope failed: calling orderer ‘localhost:7050’ failed: Orderer Server Status Code: (400) BAD_REQUEST. Description: error authorizing update: error validating DeltaSet: policy for [Group]  /Channel/Application not satisfied: Failed to reach implicit threshold of 1 sub-policies, required 1 remaining</p>
+<p>解决办法：检查config.yaml文件中org中mspid是否和docker-compose.yaml以及configtx.yaml中一致。</p>
+</li>
+<li><p>ca节点报错：Error: Failed to find private key for certificate in ‘/etc/hyperledger/fabric-ca-server-config/ca.org1.example.com-cert.pem’: Could not find matching private key for SKI: Failed getting key for SKI [[139 23 134 41 187 180 28 134 172 114 144 24 14 8 90 144 229 235 246 159 157 108 197 75 176 236 120 190 227 196 237 254]]: Key with SKI 8b178629bbb41c86ac7290180e085a90e5ebf69f9d6cc54bb0ec78bee3c4edfe not found in /etc/hyperledger/fabric-ca-server/msp/keystore</p>
+<p>解决办法：重新生成证书后，docker-compose.yaml中ca的私钥<code>FABRIC_CA_SERVER_CA_KEYFIL</code>没有更新</p>
+</li>
+<li><p>INFO 003 Endorser and orderer connections initialized<br>Error: got unexpected status: BAD_REQUEST – error validating channel creation transaction for new channel ‘mychannel’, could not succesfully apply update to template configuration: error authorizing update: error validating DeltaSet: policy for [Group] /Channel/Application not satisfied: implicit policy evaluation failed - 0 sub-policies were satisfied, but this policy requires 1 of the ‘Admins’ sub-policies to be satisfied</p>
+</li>
+</ol>
+<p>   解决办法：一种可能，fabric1.4.4版本出现这个报错，检查configtx.yaml文件，修改为下图</p>
+   <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line">Capabilities:</span><br><span class="line"># Channel capabilities apply to both the orderers and the peers and must be</span><br><span class="line"># supported by both.</span><br><span class="line"># Set the value of the capability to true to require it.</span><br><span class="line"># Note that setting a later Channel version capability to true will also</span><br><span class="line"># implicitly set prior Channel version capabilities to true. There is no need</span><br><span class="line"># to set each version capability to true (prior version capabilities remain</span><br><span class="line"># in this sample only to provide the list of valid values).</span><br><span class="line">Channel: &amp;ChannelCapabilities</span><br><span class="line"># V1.4.3 for Channel is a catchall flag for behavior which has been</span><br><span class="line"># determined to be desired for all orderers and peers running at the v1.4.3</span><br><span class="line"># level, but which would be incompatible with orderers and peers from</span><br><span class="line"># prior releases.</span><br><span class="line"># Prior to enabling V1.4.3 channel capabilities, ensure that all</span><br><span class="line"># orderers and peers on a channel are at v1.4.3 or later.</span><br><span class="line">V1_4_3: true</span><br><span class="line"># V1.3 for Channel enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.3</span><br><span class="line">V1_3: false</span><br><span class="line"># V1.1 for Channel enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.1</span><br><span class="line">V1_1: false</span><br><span class="line"></span><br><span class="line"># Orderer capabilities apply only to the orderers, and may be safely</span><br><span class="line"># used with prior release peers.</span><br><span class="line"># Set the value of the capability to true to require it.</span><br><span class="line"># Note that setting a later Orderer version capability to true will also</span><br><span class="line"># implicitly set prior Orderer version capabilities to true. There is no need</span><br><span class="line"># to set each version capability to true (prior version capabilities remain</span><br><span class="line"># in this sample only to provide the list of valid values).</span><br><span class="line">Orderer: &amp;OrdererCapabilities</span><br><span class="line"># V1.4.2 for Orderer is a catchall flag for behavior which has been</span><br><span class="line"># determined to be desired for all orderers running at the v1.4.2</span><br><span class="line"># level, but which would be incompatible with orderers from prior releases.</span><br><span class="line"># Prior to enabling V1.4.2 orderer capabilities, ensure that all</span><br><span class="line"># orderers on a channel are at v1.4.2 or later.</span><br><span class="line">V1_4_2: true</span><br><span class="line"># V1.1 for Orderer enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.1</span><br><span class="line">V1_1: false</span><br><span class="line"></span><br><span class="line"># Application capabilities apply only to the peer network, and may be safely</span><br><span class="line"># used with prior release orderers.</span><br><span class="line"># Set the value of the capability to true to require it.</span><br><span class="line"># Note that setting a later Application version capability to true will also</span><br><span class="line"># implicitly set prior Application version capabilities to true. There is no need</span><br><span class="line"># to set each version capability to true (prior version capabilities remain</span><br><span class="line"># in this sample only to provide the list of valid values).</span><br><span class="line">Application: &amp;ApplicationCapabilities</span><br><span class="line"># V1.4.2 for Application enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.4.2</span><br><span class="line">V1_4_2: true</span><br><span class="line"># V1.3 for Application enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.3.</span><br><span class="line">V1_3: false</span><br><span class="line"># V1.2 for Application enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.2 (note, this need not be set if</span><br><span class="line"># later version capabilities are set)</span><br><span class="line">V1_2: false</span><br><span class="line"># V1.1 for Application enables the new non-backwards compatible</span><br><span class="line"># features and fixes of fabric v1.1 (note, this need not be set if</span><br><span class="line"># later version capabilities are set).</span><br><span class="line">V1_1: false</span><br></pre></td></tr></table></figure>
+
+<p>   另一种可能，检查代码<code>ccPolicy := cauthdsl.SignedByAnyMember([]string&#123;&quot;Org1MSP&quot;&#125;)</code>中<code>Org1MSP</code>部分是否正确(根据实际情况填写)</p>
+<ol start="8">
+<li><p>gRPC Transport Status Code: (4) DeadlineExceeded. Description: context deadline exceeded</p>
+<p>解决方法：检查链码返回的数据是否超出grpc定义的最大限度</p>
+</li>
+<li><p>Failed to get endorsing peers: error getting endorsers from channel response: no endorsement combination can be satisfied</p>
+<p>解决方法：查看channel文件capabilities的版本信息</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">./bin/configtxgen -profile OneOrgChannel -inspectChannelCreateTx ./artifacts/channel.tx</span><br></pre></td></tr></table></figure>
+
+<p>是否与configtx.yaml中的<code>Capabilities</code>部分一致。否则修改configtx.yaml，重新生成证书和通道配置。</p>
+</li>
+<li><p>couchDB查询结果按顺序排序。根据官方网站给出的语法：<a target="_blank" rel="noopener" href="https://docs.couchdb.org/en/stable/api/database/find.html#find-sort%EF%BC%8C%E5%9C%A8%E5%AE%9E%E9%99%85%E8%BF%90%E7%94%A8%E4%B8%AD%E4%BC%9A%E6%8A%A5%E9%94%99%E2%80%9C&quot;error&quot;">https://docs.couchdb.org/en/stable/api/database/find.html#find-sort，在实际运用中会报错“&quot;error&quot;</a>: “no_usable_index”,”reason”: “No index exists for this sort, try indexing by the sort fields.””。但数据库中确实已经创建了该索引。</p>
+<p>实际上，错误原因是：如果创建的一条索引包含了多条属性，那么查询是指定sort就要包含响应的所有属性。</p>
+<p>![image-20200619135756392](基于hyperledger fabric1.4的资产分类系统.assets/image-20200619135756392.png)</p>
+</li>
+</ol>
+<h2 id="下一步工作"><a href="#下一步工作" class="headerlink" title="下一步工作"></a>下一步工作</h2><p>目前对fabric有了一个初步认识，但对于具体的功能模块还需要进一步学习，例如：MSP，BCCSP，Fabric-CA，共识机制等等，这将是后面的一部分工作，另外，熟悉原理后将对fabric的算法进行替换，替换为国密，以及对Fabric-CA进行替换等。另外，对于fabric2.0，需要进一步了解与1.4版本的差异之处。</p>
+<p>项目地址：</p>
+<p>参考文献：</p>
+<p><a target="_blank" rel="noopener" href="https://docs.couchdb.org/en/latest/api/database/find.html#find-selectors">https://docs.couchdb.org/en/latest/api/database/find.html#find-selectors</a></p>
+<p><a target="_blank" rel="noopener" href="https://hyperledger-fabric.readthedocs.io/en/release-2.0/couchdb_tutorial.html#query-the-couchdb-state-database">https://hyperledger-fabric.readthedocs.io/en/release-2.0/couchdb_tutorial.html#query-the-couchdb-state-database</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/llongst/p/9571363.html">https://www.cnblogs.com/llongst/p/9571363.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://chainhero.io/2018/06/tutorial-build-blockchain-app-v1-1-0/#configuration">https://chainhero.io/2018/06/tutorial-build-blockchain-app-v1-1-0/#configuration</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.chaindesk.cn/witbook/11/221">https://www.chaindesk.cn/witbook/11/221</a></p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2020-06-01</span><i class="fa fa-tag"></i><a class="tag" href="/tags/区块链/" title="区块链">区块链 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,https://young.0kami.cn/2020/06/01/基于hyperledger fabric1.4的资产分类系统/,yogurt,基于hyperledger fabric1.4的资产分类系统,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2020/12/25/cissp%E8%80%83%E8%AF%95%E6%80%BB%E7%BB%93/" title="cissp考试总结">Post Anterior</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2020/02/23/chrome%E6%8F%92%E4%BB%B6%E5%BC%80%E5%8F%91/" title="浏览器插件">Próximo post</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
