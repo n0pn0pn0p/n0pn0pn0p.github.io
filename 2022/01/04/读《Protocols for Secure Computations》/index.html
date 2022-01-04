@@ -1,0 +1,75 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title> · yogurt</title><meta name="description" content="读《Protocols for Secure Computations》1.概述《Protocols for Secure Computations》是姚期智教授在1982年发表的文章，在该文章中首次提出了著名的姚氏百万富翁问题：
+
+
+
+翻译：两个百万富翁想知道谁更富有;但是，他们不想无意中发现有关"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">yogurt</a></h3></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a target="_blank" rel="noopener" href="https://www.caicai.me"> CaiCai </a><span>&</span><a target="_blank" rel="noopener" href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a></a></h3></div><div class="post-content"><h1 id="读《Protocols-for-Secure-Computations》"><a href="#读《Protocols-for-Secure-Computations》" class="headerlink" title="读《Protocols for Secure Computations》"></a>读《Protocols for Secure Computations》</h1><h2 id="1-概述"><a href="#1-概述" class="headerlink" title="1.概述"></a>1.概述</h2><p>《Protocols for Secure Computations》是姚期智教授在1982年发表的文章，在该文章中首次提出了著名的姚氏百万富翁问题：</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20211231152901060.png" alt="image-20211231152901060" style="zoom:100%;" />
+
+<blockquote>
+<p>翻译：两个百万富翁想知道谁更富有;但是，他们不想无意中发现有关彼此财富的任何其他信息。他们怎么能进行这样的对话呢？</p>
+</blockquote>
+<p>将该问题转化为一般化的场景：假设 m 人希望计算函数 f（x1， x 2， x 3 ， . . . ， x m） 的值，它是有界范围的 m 个整数变量 xi 的整数值函数。假设第P i个人知道x i的值，而不知道其他x的值。</p>
+<p>在该文章中，姚教授对该问题提出了可行性的分析，首先针对此类场景问题给出了一个精确的公式，来描述这一问题；其次，对于上述百万富翁问题，给出了三种解决方案；接着对该问题的解决方案需要交互多少字节数进行讨论；最后，对于方案中给出了防止参与方作弊行为的方法。</p>
+<h2 id="2-A-Uniﬁed-View-of-Secure-Computation安全计算的统一视图"><a href="#2-A-Uniﬁed-View-of-Secure-Computation安全计算的统一视图" class="headerlink" title="2.A Uniﬁed View of Secure Computation安全计算的统一视图"></a>2.A Uniﬁed View of Secure Computation安全计算的统一视图</h2><p>该部分提出了Difﬁe 和Hellman在1976年提出的单项函数（one-way functions）被应用的场景：第一种是用于消息的加密和传输，以使其对窃听者和破坏者不可读和不可更改；第二种是包括”心理扑克”（“mental poker”）和抛硬币（“coin ﬂipping”），”心理扑克”中两个玩家通过电话线进行通信来交易牌；在”掷硬币”中，其中两个相互怀疑的一方将产生一个无偏见的位。</p>
+<p>以上这些应用场景都是类似的，姚教授认为需要有一个统一的框架，如果要理解单向函数的内在力量和局限性，这样的框架是必不可少的（More fundamentally, such a framework is essential if we are ever to understand the intrinsic power and limitation of one-way functions.），并给出一个一般场景描述的建议：双方 Alice 和 Bob 分别拥有私有变量 i 和 j，他们希望进行通信，以便 Alice 可以计算函数 f（i， j），而 Bob 可以计算函数 g（i， j）。通信线路上可能有一些窃听者或破坏者。协议的目的是为Alice和Bob设计一个算法，以便可以满足某些安全约束（针对破坏者）和隐私约束（Alice可能不希望透露i的确切值）。</p>
+<p>然而，如果在一些极端情况下，上述场景中可能会出现窃听、破坏等。</p>
+<h2 id="3-确定性计算"><a href="#3-确定性计算" class="headerlink" title="3.确定性计算"></a>3.确定性计算</h2><p>###3.1 百万富翁解决方案</p>
+<p>为了确定性，假设Alice有i百万，Bob有j百万，并且1&lt;i,j&lt;10。现在需要一个协议来解决比较i和j的大小，设 M 是所有 N 位非负整数的集合，QN 是所有 1-1 到从 M 到 M 的函数的集合。设 Ea 是 Alice 的公钥，通过从 QN 中选择一个随机元素而生成。协议的进行方式如下：</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20211231155859803.png" alt="image-20211231155859803" style="zoom:100%;" />
+
+<p>这个过程中，首先，Alice对Bob的财富j一无所知，除了Bob告诉她的最终结果所隐含的对j的约束，因为Bob唯一的其他信息是Bob知道Da(s)在<code>k − j + 1</code>到<code>k − j + 10</code>之间的某个s的值。由于函数 Ea 是随机的，因此所有 10 种可能性都相等。</p>
+<p>Bob知道什么？他知道y j（这是x），因此知道zj。然而，他没有关于其他zu的值的信息，并且通过查看Alice发送给他的数字，他无法判断它们是zu还是z u + 1。</p>
+<p>但这个过程还是有一些问题的，Alice或Bob可能会试图通过进行更多的计算来计算出对方的价值。例如，Bob 可能会尝试随机选择一个数字 t，并检查 E a （t） = k − j + 9;如果他成功了，他就知道值y9是t，并且知道z9的值，这使他能够找出i是否≥9。</p>
+<p>因此在对协议的定义中还要包括：参与者不仅不会由于协议规定的交换而获得信息，而且他们也不能在合理的时间内进行计算以获得这些信息。</p>
+<p>这里还有一个问题，参与方可能会作弊，比如说，Bob可能会在最后一步对Alice撒谎，并告诉Alice错误的结论。因此协议的设计必须要考虑，使成功作弊的机会变得非常小，而不会泄露i和j的值？</p>
+<p>针对以上百万富翁问题，姚教授还提出根据不同的原则，他们还有另外两种解决百万富翁问题的方法。第一个假设 Alice 和 Bob 各自拥有一个私有单向函数，其中这些函数满足交换性属性，即 E a E b （x） = E b E a （x）。另一种解决方案利用了Goldwasser和Micali发明的概率加密方法。</p>
+<h3 id="3-2-一般问题模型"><a href="#3-2-一般问题模型" class="headerlink" title="3.2 一般问题模型"></a>3.2 一般问题模型</h3><p>由于这三种解决方案的安全性基于不同的假设，因此必须为每个解决方案详细指定精确的模型。在这个抽象中，姚教授团队只给出对应于第一个解决方案的模型。</p>
+<p>为简单起见，只给出 f 值为 0−1 且 m = 2（Alice 和 Bob）的情况的定义和结果。结果推广到一般m将在第5节中简要讨论。一般案件的证明涉及额外的技术复杂性，并且还有额外的安全考虑因素，例如在2人案件中不存在的可能的”共谋”。</p>
+<ul>
+<li><p>协议</p>
+<p>假设Alice有一个门陷单向函数 <code>Ea</code> ，其逆函数 <code>Da</code> 只有Alice知道;类似地，Bob 有一个公共 <code>Eb</code>，和一个私有逆 <code>Db</code>。假设 <code>Ea</code> 和 <code>Eb</code> 是独立且随机地从 <code>QN</code> 抽取的，<code>QN</code>是 N 位整数上所有可能的 1-1 的集合。用于计算函数<code> f(i,j)</code> 的协议 A 准确地指定了 Alice 和 Bob 应如何通信，如下所示。Alice 和 Bob 交替向对方发送字符串。每次Bob完成传输后，Alice都会检查她迄今为止掌握的信息，其中包括一些字符串序列<code>α1,α2,......,αt</code>，以及字符串之间的一些关系（例如<code>Eb(α3)=α9</code>，<code>α8</code>的奇数为1）;根据迄今为止在她和 Bob 之间传输的位，该协议指定了她应该如何在私有字符串中计算<code>αt+1、αt+2、......、αs</code>，其中每个新字符串<code>αu</code> 是早期字符串的函数，或者形式为<code> Ea(y)</code>、<code>Eb(y)</code> 或 <code>Da(y)</code>，其中 <code>y</code> 是已获得的字符串。选择应用哪个函数或是否评估<code>Eb</code>或<code>Da</code>通常是概率性的，即她将决定评估<code>E(4)</code>，或者根据一些硬币投掷的结果计算<code>α2+3α8</code>。完成此计算后，她将向 Bob 发送一个字符串，再次以概率方式选择该字符串。现在轮到 Bob 计算字符串并根据协议发送字符串了。我们同意有一个特殊的符号，其出现意味着协议执行的结束。 到时，协议有一个指令，供每个参与者私下计算函数值f。最后，我们要求，在协议中，Bob 和 Alice 对 E 和 D 的求值总数以<code> O(N^K)</code> 为界，其中 k 是预先选择的整数。</p>
+</li>
+<li><p>隐私约束</p>
+<p>设ε, δ &gt; 0，而 f(i,j)是一个0-1值函数。假设最初所有(i,j) 值对的可能性都相等。假设 Bob 和 Alice 根据协议忠实地执行计算。最后，爱丽丝原则上可以从她计算的函数值v和她所拥有的字符串中计算出j值的概率分布;将此称为 pi(j)。如果满足以下条件，则称协议满足 （ε, δ）隐私约束：</p>
+<p>![image-20211231171215380](/Users/youngyoung/Library/Application Support/typora-user-images/image-20211231171215380.png)</p>
+<p>**定理1.**对于任何 ，ε, δ &gt; 0 和任何函数 f，存在一个满足 （ε,  δ） 隐私约束的计算 f 协议。</p>
+</li>
+</ul>
+<h3 id="3-3-其他需求"><a href="#3-3-其他需求" class="headerlink" title="3.3 其他需求"></a>3.3 其他需求</h3><ul>
+<li><p>(A) 复杂性Complexity</p>
+<p>如果 i、 j 的范围 n 变大，那么前面给出的百万富翁问题的解决方案将变得不切实际，因为传输的位数与 n 成正比。一个有趣的问题是，确定任何协议计算满足（ε, δ）隐私约束的f所需的最小位数。可以想象，有些函数在没有隐私要求的情况下很容易计算，但是由于额外的隐私约束而变得不可行。幸运的是，可以证明事实并非如此。设 A 为协议，设 T（A） 表示使用 A 时 Alice 和 Bob 之间交换的最大位数。</p>
+<p>**定理2.**设 1 &gt; ε, δ &gt; 0 和 f（i， j） 是 0-1 函数。如果 f 可以通过大小为 C(f) 的布尔电路计算，则存在一个计算 f的协议 A ，该计算 f 满足 （ε,δ）-隐私约束，使得： T（A） = O( C(f)*log 1/εδ)。</p>
+<p>**定理3.**设 1/5 &gt; ε,δ &gt; 0 。设 f 是 F n 的随机元素，则任何计算 f 且具有( ε, δ)-隐私约束的协议 A 对于所有大 n 都必须具有 T（A） &gt; 2^ (n/2)。</p>
+</li>
+<li><p>(B)相互怀疑的参与方Mutually-Suspecting Participants.(如果参与方不遵循规则)</p>
+<p>**定义1.**考虑一个协议执行的实例。假设Alice成功作弊，则Alice的行为与i的任何值不一致，但Bob没有检测到它。Bob同理。</p>
+<p>**定理4.**设 1 &gt; γ &gt; 0。在定理 2 的相同假设下，存在一个用于计算 f 的协议 A，使得</p>
+<p>​            1.T(A) = O(C(f) * log(1/εδγ ) * log(1/γ))，并且</p>
+<p>​            2.如果一个参与者的行为符合A，则另一个参与者成功作弊的概率最多为γ。</p>
+</li>
+</ul>
+<h3 id="3-4-应用"><a href="#3-4-应用" class="headerlink" title="3.4 应用"></a>3.4 应用</h3><ul>
+<li><p>秘密选举</p>
+<p>有m个成员的委员会进行yes-no投票选举。每个人有xi，最终计算f(x1,x2…xi…xm).</p>
+</li>
+<li><p>不经意谈判</p>
+<p>假设Alice要卖房给Bob，Alice有谈判策略A1，A2，…,At，Bob有B 1, B 2, . . . , B u，最后由两人的输入获得输出，（不成交，以某个价位成交，…），这个过程Alice和Bob不会获得额外信息，但通过A，B，计算出了f(i,j)。</p>
+</li>
+<li><p>数据库隐私查询</p>
+<p>我们把 Bob 看作一个数据库查询系统，其中 j 是数据库的状态，而 Alice的查询编号 i，那么 Alice 就可以在不了解其中数据的情况下得到查询的答案，而数据库系统不知道 Alice 查询了什么。</p>
+</li>
+</ul>
+<h2 id="4-概率计算"><a href="#4-概率计算" class="headerlink" title="4.概率计算"></a>4.概率计算</h2><p>考虑两方Bob和Alice的情况（m = 2）。设 V 和 W 为有限集合。如果 p（v， w） 在 v 和 w 上的和等于 1，则从 V × W 到区间 [0， 1] 的函数 p 称为概率密度。设 P（V， W） 是所有此类概率密度的集合。</p>
+<h2 id="5-推理到M-方"><a href="#5-推理到M-方" class="headerlink" title="5.推理到M-方"></a>5.推理到M-方</h2><p>当 m 方 A1，A2，…，A m 协作计算函数 f（x 1， x 2， . . . ， x m） 时，多个参与方可能串通作弊。首先申明，即使是最严厉的限制也可以在以下意义上得到满足：无论有参与方可能串通一气，任何作弊行为都会被所有诚实的各方发现和识别（即使多达m-1不诚实的家伙试图帮助掩盖）。</p>
+<p>**定理5.**对于任何ε， δ， γ &gt; 0，存在一个用于计算 f 的协议 A，该协议满足 （ε， δ）-隐私约束，并且具有这样的性质：对于任何 K‘ ≠  { 1， . . . ， m }，K‘ 成功作弊的概率不能超过 γ。</p>
+<p>**定理6.**存在函数 f，对于任何满足定理 5 中条件的协议 A 都必须具有该函数：<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220104112723090.png" alt="image-20220104112723090" style="zoom:50%;" /></p>
+<p>##6.什么不能做到</p>
+<p>存在任何协议都无法实现的安全约束。我们在这里只提到两个结果。</p>
+<p>第一个不可能的结果对本文给出的所有三个模型都有效。假设m人试图产生由偏差α的比特。例如，A生成一个随机无偏差 α 1并将其发送到B，B生成随机α 2并将其发送到C，C生成随机α 3并将其发送到A。现在让α = α 1 + α 2 + α 3 ，我们得到一个无偏α，其属性是即使其中一个人通过生成有偏见的位来作弊，它仍然是无偏的。让我们调用一个协议，用于生成带有偏见α鲁棒的一点，如果有人作弊，偏见仍然是正确的。</p>
+<p>**定理 7.**没有一个具有有限 T(A) 的协议 A 产生一个具有先验偏差 α 的比特是鲁棒的。</p>
+<p>第二个结果对第 3.2 节中定义的模型有效。假设 Alice 和 Bob 希望交换一对解 x， y，其中 E a （x） = 1 和 E b （y） = 1。是否有协议使得诚实的一方不会被双重交叉，即在没有从另一方获得秘密的情况下被骗出其秘密。</p>
+<p><strong>定理 8.</strong> 设 A 是任何用于交换秘密的协议。 那么Alice或Bob将能够以至少 1/2 的概率成功进行双交叉。</p>
+<p>值得一提的是，在同一模型中可以进行不同类型的秘密交换。 假设 Alice 想知道 E b (y) = w 的解 y，Bob 想知道 E a (x) = u 的解 x，但 Bob 不知道 w 的值，Alice 也不知道 u。 令 N 为加密函数 E a 和 E b 操作的位数。</p>
+<p><strong>定理 9.</strong> 令 ε &gt; 0 是固定的。 有一个具有多项式（以 N 为单位）运行时间的协议 A，它交换秘密 D b (w) 和 D a (u)，在该协议下，任何人双交叉成功的概率以 ε 为界。</p>
+<p>之前已经考虑了不同类型的交换秘密。 Blum [6] 表明可以交换大合数（一种特殊类型的秘密）的因数，而作弊机会消失了。 甚至（私人通信，1981）也设计了一些交换秘密的协议。</p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-01-04</span><i class="fa fa-tag"></i></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,https://young.0kami.cn/2022/01/04/读《Protocols for Secure Computations》/,yogurt,,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2021/06/24/java%20%E8%B0%83%E7%94%A8go%E5%87%BD%E6%95%B0/" title="基java 调用go函数">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
