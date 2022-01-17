@@ -1,0 +1,78 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title> · yogurt</title><meta name="description" content="GC混淆电路相关协议学习笔记混淆电路(Garbled Circuit)混淆电路(Garbled Circuit),又称姚氏电路(Yao’s GC)是由姚期智教授于1986年针对百万富翁问题提出的解决方案。
+首先，姚氏电路是基于半诚实敌手安全模型（semi-honest adversary）
+
+半诚实"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">yogurt</a></h3></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a target="_blank" rel="noopener" href="https://www.caicai.me"> CaiCai </a><span>&</span><a target="_blank" rel="noopener" href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a></a></h3></div><div class="post-content"><h1 id="GC混淆电路相关协议学习笔记"><a href="#GC混淆电路相关协议学习笔记" class="headerlink" title="GC混淆电路相关协议学习笔记"></a>GC混淆电路相关协议学习笔记</h1><h2 id="混淆电路-Garbled-Circuit"><a href="#混淆电路-Garbled-Circuit" class="headerlink" title="混淆电路(Garbled Circuit)"></a>混淆电路(Garbled Circuit)</h2><p>混淆电路(Garbled Circuit),又称<em>姚氏电路</em>(Yao’s GC)是由姚期智教授于1986年针对百万富翁问题提出的解决方案。</p>
+<p>首先，姚氏电路是基于半诚实敌手安全模型（<strong>semi-honest adversary</strong>）</p>
+<ul>
+<li><p>半诚实敌手</p>
+<p>在双方安全的语境下（后文不特别指出都做此假设），如果有其中一方被腐坏（corrupted），此处假设是y方。在遵守协议的前提下，y会希望能获取到x的输入。这样的一方被称为半诚实敌手。</p>
+<p>![image-20220117184744307](/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117184744307.png)</p>
+<p>Special case: security against semi-honest (passive, honest-but-curious) adversary: 诚实但好奇</p>
+<p>​        Adversary assumed to follow the protocol on a given input 敌手会遵守协议输入</p>
+<p>​        Adversary may try to learn information based on what it sees 敌手会尝试从他看到的获得更多的信息</p>
+</li>
+<li><p>场景介绍</p>
+<p>前提：参与方Alice持有数据x∈X，参与方Bob持有数据y∈Y， X和Y 是P1和P2的输入域</p>
+<p>需求：Alice和Bob在不获知对方数据的情况下计算F(x,y)</p>
+<p>首先考虑一个很小的输入域的F，那么即可枚举所有(x,y)。我们以电路中的异或门为例，假设a为Alice的输入，b为Bob的输入，c为输出，左图为真值表，右图为电路的输入输出，可以看出，电路中有三条线（两条输入线a、b，一条输出线c），我们将其标为 w1、w2、w3 </p>
+<p><img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117184953047.png" alt="image-20220117184953047" style="zoom:50%;" /><img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185001319.png" alt="image-20220117185001319" style="zoom:50%;" /></p>
+</li>
+<li><p>生成电路</p>
+<p>1.Alice为电路中所有线路分配两个分别代表逻辑值0和1的密钥。记一条线路为wi，则为其分配两个密钥记为<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185317472.png" alt="image-20220117185317472" style="zoom:50%;" /> ，b为0则此密钥代表的逻辑值为0，为1则代表的逻辑值为1；</p>
+<p>2.用w1和w2的密钥值，对w3的逻辑值对应的密钥值进行加密，将w3替换为该加密值。</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185346489.png" alt="image-20220117185346489" style="zoom:50%;" /></li>
+<li><p>混淆</p>
+<p>3.P1将表中的行进行随机置换，打乱原来行的排布。这步非常关键，因为这样一来，行的位置便不包含任何信息。（若不打乱，则我们能知道表的每一行的加密值是由哪两个逻辑值加密而来的）。这一步称为混淆（garbled）。</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185431161.png" alt="image-20220117185431161" style="zoom:50%;" /></li>
+<li><p>计算结果</p>
+<p>4.Alice将打乱后的密文、Alice输入的逻辑值对应的密钥（如<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185517366.png" alt="image-20220117185517366" style="zoom:50%;" />），Bob的密钥<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185558118.png" alt="image-20220117185558118" style="zoom:50%;" />发送给Bob。需要注意，此处并非将<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185537153.png" alt="image-20220117185537153" style="zoom:50%;" />均发给Bob，而需要通过1-OT，Bob获取其输入对应的k（如Bob的输入是1，他获取的k就是<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185652451.png" alt="image-20220117185652451" style="zoom:50%;" /> ）；</p>
+<p>5.由于Bob收到的这些k都是随机数，所以并没有任何有效信息泄露。Bob根据收到的<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185517366.png" alt="image-20220117185517366" style="zoom:50%;" />  和自己的<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185652451.png" alt="image-20220117185652451" style="zoom:50%;" /> ，对上述加密表的每一行尝试解密（有一些方法可以减少解密次数，书上举例了Point-and-Permute）；</p>
+<p>6.将正确的解密结果发给Alice，Alice根据解密出的<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117185906880.png" alt="image-20220117185906880" style="zoom:50%;" />与w3的映射关系，获得w3的值。</p>
+</li>
+<li><p>思考</p>
+</li>
+<li><p>如果Bob拿到Alice的密钥和自己的密钥后，对w3的k做加密，加密结果和Alice发送的密文结果比较，找到相同一项是否可以？这样只需要计算2次；而如果做解密，找到正确的那项，至少要算2次，而且还需要标记位标明正确结果</p>
+<p>如果是两方的与门，如果Alice输入是1，Bob也是1，Alice和Bob可以通过计算结果获知对方的输入，或门亦然？</p>
+</li>
+</ul>
+<h2 id="GMW-Protocol"><a href="#GMW-Protocol" class="headerlink" title="GMW Protocol"></a><strong>GMW Protocol</strong></h2><p>GMW协议由Goldreich等人提出，基于混淆电路（ <em>Garbled Circuit</em> ），支持多方的半诚实的安全计算协议。和之前所述的姚氏混淆电路估值方案的不同之处在于，GMW混淆电路估值方案不需要使用混淆真值表，因此没用混淆真值表带来的查表和加解密操作，节省了非常大的计算量和通信量。</p>
+<ul>
+<li><p>通信</p>
+<p>![image-20220117190802340](/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117190802340.png)</p>
+</li>
+<li><p>运算</p>
+</li>
+</ul>
+<p>至此，Alice拥有了𝑎和b的子秘密a_Alice和b_Alice <em>，</em> Bob掌握了𝑎和b的子秘密a_Bob和b_Bob，接下来进行电路运算：</p>
+<p>​    1.<strong>异或门</strong></p>
+<p>​    在本地对其掌握的秘密进行⨁计算：<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117191006549.png" alt="image-20220117191006549" style="zoom:50%;" /></p>
+<p>​    2.<strong>非门</strong></p>
+<p>​    由于非门是单输入的，Alice和Bob间无须进行交互，因此直接对输入求反即可；</p>
+<p>​    3.<strong>与门</strong></p>
+<p>​    因为<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117191229723.png" alt="image-20220117191229723" style="zoom:50%;" />，因此Alice和Bob无法只在本地完成与门的计算。如下：<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117191322558.png" alt="image-20220117191322558" style="zoom:50%;" />的计算可通过4选1-OT完成：</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117191338009.png" alt="image-20220117191338009" style="zoom:50%;" />
+
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117191348223.png" alt="image-20220117191348223" style="zoom:50%;" />
+
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117191618374.png" alt="image-20220117191618374" style="zoom:50%;" />
+
+<ul>
+<li><p><strong>扩展到多方</strong></p>
+<p>参与者为𝑃1,𝑃2,…,𝑃𝑛，假设输入为m个比特，那么每个参与者𝑃𝑖产生𝑚组，每组𝑛−1个随机比特，分别将每组的𝑛−1个随机比特发送给除了自己之外的n-1个参加者。</p>
+<p>假设输入数据为1个比特，那么每个参与者𝑃𝑖向参与者𝑃𝑗发送𝑟𝑖𝑗,1≤𝑗≤𝑛且𝑗≠𝑖。在所有参与者发送完成后，参与者𝑃𝑖掌握了𝑟1𝑖,𝑟2𝑖,…,𝑟𝑛𝑖。假设𝑃𝑖的输入为𝑎，那么𝑃𝑖将𝑎⊕𝑟1𝑖⊕𝑟2𝑖⊕…⊕𝑟𝑛𝑖作为𝑎的子秘密𝑎𝑖。</p>
+<p>对应的收到𝑃𝑖发送的随机比特𝑟𝑖𝑗的参与者𝑃𝑗，将𝑟𝑖𝑗当做秘密𝑎的子秘密𝑎𝑗。因此𝑎=𝑎1⊕𝑎2⊕…⊕𝑎𝑛。</p>
+<p>1.对于异或门以及非门，和双方情况下相同，每个参与者直接在本地进行计算即可。</p>
+<p>2.对于与门，与门的输入为𝑎和b，参与者𝑃𝑖手中掌握了𝑎和b的子秘密𝑎𝑖和𝑏𝑖，因为𝑎=𝑎1⊕𝑎2⊕…⊕𝑎𝑛，𝑏=𝑏1⊕𝑏2⊕…⊕𝑏𝑛，可得：𝑎⋀𝑏 = (𝑎1⊕𝑎2⊕ …⊕𝑎n)⋀(𝑏1⊕𝑏2⊕ …⊕𝑏n)= (⊕nj=1,i=1 𝑎i⋀𝑏j)</p>
+<p>这其中，对于𝑃𝑖来说，每个𝑎𝑖⋀𝑏𝑖都可由𝑃𝑖在本地进行计算。而对于𝑎𝑖⋀𝑏𝑗,𝑖≠𝑗，可由参与者𝑃𝑖和𝑃𝑗通过上述的两方BGW协议共同计算出𝑎𝑖⋀𝑏𝑗的两个子秘密。当电路计算完成，每个参与者公布自己所掌握的子秘密，再将所有的子秘密进行异或，即可得到最后的计算结果。</p>
+</li>
+</ul>
+<h2 id="BGW-Protocol"><a href="#BGW-Protocol" class="headerlink" title="BGW Protocol"></a>BGW Protocol</h2><p>BGW协议基于Shamir(t, n)门限秘密共享机制，利用了Shamir秘密共享机制的加法同态和乘法同态的性质。</p>
+<p>假设一个门的输入分别为𝑎和𝑏，秘密𝑎和𝑏已经分别由秘密分配函数：<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117192007714.png" alt="image-20220117192007714" style="zoom:50%;" /></p>
+<p>分配完成，𝑓𝑎(0)=𝑎，𝑓𝑏(0)=𝑏，参与者𝑃𝑖掌握𝑎和b的子秘密𝑎𝑖,𝑏𝑖。在布尔电路上，可将异或门和与门分别看成在有限域𝐹2上的加法和乘法。将异或用模为2的加法进行计算，与用模为2的乘法进行计算。</p>
+<p>1.<strong>抑或门</strong></p>
+<p>由于Shamir具有加法同态性，因此：𝑎⊕𝑏=𝑓𝑎(0)⊕𝑓𝑏(0), 𝑓𝑎(𝑥)⊕𝑓𝑏(𝑥)=(𝛼t-1+𝛽t-1)𝑥t-1+⋯+(𝛼1+𝛽1)𝑥1+(𝑎+𝑏)</p>
+<p>假设𝑓𝑐(𝑥)=𝑓𝑎(𝑥)⊕𝑓𝑏(𝑥)，则𝑓𝑐(𝑖)=𝑓𝑎(𝑖)⊕𝑓𝑏(𝑖)，而𝑓𝑎(𝑖)=𝑎𝑖和𝑓𝑏(𝑖)=𝑏𝑖都由𝑃𝑖掌握，因此𝑃𝑖可以本地计算出𝑓𝑐(𝑖)=𝑎𝑖+𝑏𝑖。当所有计算完成后，每个参与者𝑃𝑖公布自己计算出的𝑓𝑐(𝑖)， 即可恢复出𝑓𝑐(𝑥)和𝑓𝑐(0)。</p>
+<p>2.<strong>与门</strong></p>
+<p>每个参与者𝑃𝑖计算𝑑𝑖=𝑎𝑖𝑏𝑖，接着每个𝑃𝑖独自选取次数为t次的随机多项式ℎ𝑖(𝑥)，且满足ℎ𝑖(0)=𝑑𝑖,1≤𝑖≤𝑛，𝑡&lt;𝑛/2。向各个参与者分配𝑑𝑖，且𝑐𝑖𝑗= ℎ𝑖(𝑗),1≤𝑖,𝑗≤𝑛。所有参与者分配结束后，𝑃𝑖掌握了信息𝑐1𝑖,𝑐2𝑖,…,𝑐𝑛𝑖，同时再利用公开的重组向量𝜆1,…,𝜆𝑛，𝑃𝑖计算：<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117192045385.png" alt="image-20220117192045385" style="zoom:50%;" /></p>
+<p>此时𝑃𝑖掌握的子秘密𝑐𝑖即为𝑎𝑏的子秘密。当所有计算完成后，每个参与者公开自己的子秘密，再根据之前叙述的Shamir(t, n)门限秘密重构算法即可获得𝑎𝑏。</p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-01-17</span><i class="fa fa-tag"></i></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,https://young.0kami.cn/2022/01/17/GC混淆电路相关协议学习笔记/,yogurt,,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2022/01/17/%E5%87%A0%E7%A7%8D%E4%B8%8D%E7%BB%8F%E6%84%8F%E4%BC%A0%E8%BE%93%E5%8D%8F%E8%AE%AE/" title="">上一篇</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2022/01/03/%E8%AF%BB%E3%80%8AProtocols%20for%20Secure%20Computations%E3%80%8B/" title="读《Protocols for Secure Computations》">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>

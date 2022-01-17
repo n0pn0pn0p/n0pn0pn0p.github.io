@@ -1,0 +1,55 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author"><title> · yogurt</title><meta name="description" content="几种不经意传输协议1-out-of-n OT(离散对数）
+场景介绍
+前提：Alice 有两个数值V0 和 V1    
+需求：Bob 想知道其中的一个Vi ，i ϵ{ 0,1} , Bob 知道了，但不知道 V(1-i)；同时，Alice 不知道 i 
+
+实现方式
+
+
+
+
+
+扩展为1-n OT
+前提"><meta name="keywords"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 5.4.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">yogurt</a></h3></div></div><ul class="social-links"></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a target="_blank" rel="noopener" href="https://www.caicai.me"> CaiCai </a><span>&</span><a target="_blank" rel="noopener" href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">首页</a></li><li><a href="/about">关于</a></li><li><a href="/archives">归档</a></li><li><a href="/links">友链</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a></a></h3></div><div class="post-content"><h1 id="几种不经意传输协议"><a href="#几种不经意传输协议" class="headerlink" title="几种不经意传输协议"></a>几种不经意传输协议</h1><h2 id="1-out-of-n-OT-离散对数）"><a href="#1-out-of-n-OT-离散对数）" class="headerlink" title="1-out-of-n OT(离散对数）"></a>1-out-of-n OT(离散对数）</h2><ul>
+<li><p>场景介绍</p>
+<p>前提：Alice 有两个数值V0 和 V1    </p>
+<p>需求：Bob 想知道其中的一个Vi ，i ϵ{ 0,1} , Bob 知道了，但不知道 V(1-i)；同时，Alice 不知道 i </p>
+</li>
+<li><p>实现方式</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117190137825.png" alt="image-20220117190137825" style="zoom:50%;" /></li>
+</ul>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117190155703.png" alt="image-20220117190155703" style="zoom:50%;" />
+
+<ul>
+<li><p>扩展为1-n OT</p>
+<p>前提：我们考虑 Alice 持有 x_1,…,x_n ,  x_n ϵ{ 0,1}”l “，Bob 持有i ϵ{ 0,1,…,n} 。</p>
+<p>需求：Bob通过〖OT〗_1^n ，Bob 获得x_i 但 Alice 不知道i。  </p>
+<p>实现方式：</p>
+<img src="/Users/youngyoung/Library/Application Support/typora-user-images/image-20220117190318463.png" alt="image-20220117190318463" style="zoom:40%;" /></li>
+</ul>
+<h2 id="1-out-of-n-OT-RSA）"><a href="#1-out-of-n-OT-RSA）" class="headerlink" title="1-out-of-n OT(RSA）"></a>1-out-of-n OT(RSA）</h2><p>wiki上这个协议解释的非常清晰：<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Oblivious_transfer">https://en.wikipedia.org/wiki/Oblivious_transfer</a></p>
+<img src="几种不经意传输协议.assets/image-20220117192428337.png" alt="image-20220117192428337" style="zoom:50%;" />
+
+<p>1.Alice有两条消息，m1和m2，想将其中一个发送给 Bob。 Bob 不希望 Alice 知道他收到的是哪一个;</p>
+<p>2.Alice 生成一个 RSA 密钥对，包括模数 N、公共指数 e 和私人指数 d;</p>
+<p>3.Alice 还生成两个随机值 x0,x1 并将它们连同她的公共模数和指数一起发送给 Bob。</p>
+<p>4.Bob 选择 b 为 0 或 1，并选择第一个或第二个 xb;</p>
+<p>5.Bob通过计算 v=(xb+k^e) mod N 生成一个随机值 k 并混淆 xb，并将其发送给 Alice；</p>
+<p>6.Alice 不知道（并且希望无法确定）x0 和 x1Bob 选择了哪一个。 她用两个随机值带入计算：<img src="https://wikimedia.org/api/rest_v1/media/math/render/svg/7080bd90213e669fcc80113f23a2c9445441b4d9" alt="k_{0}=(v-x_{0})^{d}\mod N" style="zoom:80%;" />和<img src="几种不经意传输协议.assets/image-20220117193647957.png" alt="image-20220117193647957" style="zoom:50%;" /></p>
+<p>这里面会有一个值等于k，但是Alice并不知道哪个是正确的；</p>
+<p>7.Alice把k1和k2分别带入计算，m0’=m0+k0和m1’=m1+k1，并且把结果发送给Bob；</p>
+<p>8.Bob选择序列号为k的m，计算mb=mb‘-k。</p>
+<h2 id="k-out-of-n-OT"><a href="#k-out-of-n-OT" class="headerlink" title="k-out-of-n OT"></a>k-out-of-n OT</h2><p>参考论文：<a target="_blank" rel="noopener" href="https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.122.6366&amp;rep=rep1&amp;type=pdf">https://citeseerx.ist.psu.edu/viewdoc/download?doi=10.1.1.122.6366&amp;rep=rep1&amp;type=pdf</a></p>
+<ul>
+<li><p>半诚实的接收者</p>
+<img src="几种不经意传输协议.assets/image-20220117194443132.png" alt="image-20220117194443132" style="zoom:50%;" /></li>
+<li><p>对抗恶意的接收者</p>
+</li>
+</ul>
+<img src="几种不经意传输协议.assets/image-20220117194419838.png" alt="image-20220117194419838" style="zoom:50%;" />
+
+<ul>
+<li><p>完美安全发送者</p>
+<img src="几种不经意传输协议.assets/image-20220117194605181.png" alt="image-20220117194605181" style="zoom:50%;" /></li>
+</ul>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-01-17</span><i class="fa fa-tag"></i></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,https://young.0kami.cn/2022/01/17/几种不经意传输协议/,yogurt,,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2022/01/17/GC%E6%B7%B7%E6%B7%86%E7%94%B5%E8%B7%AF%E7%9B%B8%E5%85%B3%E5%8D%8F%E8%AE%AE%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/" title="">下一篇</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
